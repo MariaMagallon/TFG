@@ -18,7 +18,7 @@ class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _textEditingController = new TextEditingController();
   String applicationId = 'b702e461';
   String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
-  
+
   getRecipes(String query) async {
     final urldet =
         "https://api.edamam.com/api/recipes/v2/0ec48df32629a4349a37af0fed9a6835?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1";
@@ -30,10 +30,10 @@ class _SearchScreenState extends State<SearchScreen> {
     String cadena =
         "http://www.edamam.com/ontologies/edamam.owl#recipe_0ec48df32629a4349a37af0fed9a6835";
     String subcadena;
-    subcadena = cadena.replaceAll(
-        "http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
+    subcadena = cadena.replaceAll("http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
     //print(subcadena);
     //print ("${response.body.toString()} this is response");
+    recipes.clear();
     Map<String, dynamic> jsonData = jsonDecode(response.body);
     jsonData["hits"].forEach((element) {
       RecipeApi recipeApi = RecipeApi(label: "label", image: "image");
@@ -41,7 +41,6 @@ class _SearchScreenState extends State<SearchScreen> {
       recipes.add(recipeApi);
     });
     //print("${recipes.toString()}");
-
   }
 
   @override
@@ -49,10 +48,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('AppName'),
-          flexibleSpace: Container(
-              decoration: BoxDecoration(
-                 color: Colors.indigo
-                  )),
+          flexibleSpace: Container(decoration: BoxDecoration(color: Colors.indigo)),
           actions: [
             IconButton(
               onPressed: () => {},
@@ -65,9 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: Colors.indigo           
-          ),
+            decoration: BoxDecoration(color: Colors.indigo),
           ),
           SingleChildScrollView(
             child: Container(
@@ -133,14 +127,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                       fontSize: 18,
                                       color: Colors.white,
                                     )),
-                                style: TextStyle(fontSize: 18,color: Colors.white )),
+                                style: TextStyle(fontSize: 18, color: Colors.white)),
                           ),
                           SizedBox(
                             width: 16,
                           ),
                           InkWell(
                             onTap: () {
-                          
                               if (_textEditingController.text.isNotEmpty) {
                                 setState(() {
                                   isloading = true;
@@ -152,8 +145,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               }
                             },
                             child: Container(
-                              child: Icon(Icons.search,
-                                  color: Colors.white, size: 50.0),
+                              child: Icon(Icons.search, color: Colors.white, size: 50.0),
                             ),
                           )
                         ],
@@ -161,20 +153,21 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     SizedBox(height: 25),
                     Container(
-                      child: isloading ? CircularProgressIndicator() : GridView(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        physics: ClampingScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
-                        children: List.generate(recipes.length, (index) {
-                          return GridTile(
-                              child: RecipeTile(
-                                  imageurl: recipes[index].image, 
-                                  title: recipes[index].label)
-                          );
-                        }),
-                      ),
+                      child: isloading
+                          ? CircularProgressIndicator()
+                          : GridView(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              physics: ClampingScrollPhysics(),
+                              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
+                              children: List.generate(recipes.length, (index) {
+                                return GridTile(
+                                    child: RecipeTile(
+                                        imageurl: recipes[index].image,
+                                        title: recipes[index].label));
+                              }),
+                            ),
                     )
                   ],
                 )),
@@ -196,42 +189,35 @@ class _RecipeTileState extends State<RecipeTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-            margin: EdgeInsets.all(8),
-            child: Stack(
-              children: <Widget>[
-                Image.network(
-                  widget.imageurl,
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  width: 200,
-                  alignment: Alignment.bottomLeft,
-                  decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.5)          
+      margin: EdgeInsets.all(8),
+      child: Stack(
+        children: <Widget>[
+          Image.network(
+            widget.imageurl,
+            height: 200,
+            width: 200,
+            fit: BoxFit.cover,
           ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.title,
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold
-                              ),
-                        ),
-                        
-                      ],
-                    ),
+          Container(
+            width: 200,
+            alignment: Alignment.bottomLeft,
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.5)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    widget.title,
+                    style:
+                        TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                   ),
-                )
-              ],
+                ],
+              ),
             ),
-          );
+          )
+        ],
+      ),
+    );
   }
 }
-
