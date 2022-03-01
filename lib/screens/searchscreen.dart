@@ -210,7 +210,7 @@ class _RecipeTileState extends State<RecipeTile> {
                   Text(
                     widget.title,
                     style:
-                        TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+                        TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
