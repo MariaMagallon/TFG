@@ -36,11 +36,11 @@ class _SearchScreenState extends State<SearchScreen> {
     recipes.clear();
     Map<String, dynamic> jsonData = jsonDecode(response.body);
     jsonData["hits"].forEach((element) {
-      RecipeApi recipeApi = RecipeApi(label: "label", image: "image");
+      RecipeApi recipeApi = RecipeApi(label: "label", image: "image",uri:"uri");
       recipeApi = RecipeApi.fromMap(element["recipe"]);
       recipes.add(recipeApi);
     });
-    //print("${recipes.toString()}");
+    print("${recipes.toString()}");
   }
 
   @override
@@ -163,9 +163,19 @@ class _SearchScreenState extends State<SearchScreen> {
                                   maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
                               children: List.generate(recipes.length, (index) {
                                 return GridTile(
+                                    child: GestureDetector(
+                                       onTap: () {
+                                        print("${recipes[index].label}");
+                                        print("${recipes[index].uri}");
+                                        String idRecipe;
+                                        idRecipe = recipes[index].uri.replaceAll("http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
+                                        print("https://api.edamam.com/api/recipes/v2/$idRecipe?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1");
+                                      },
                                     child: RecipeTile(
                                         imageurl: recipes[index].image,
-                                        title: recipes[index].label));
+                                        title: recipes[index].label)
+                                    )
+                                    );
                               }),
                             ),
                     )
