@@ -251,7 +251,7 @@ class DetailScreen extends StatelessWidget {
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             Text(
-                                              recipeDetail.calories.toString() +" kcal",
+                                              recipeDetail.calories.toStringAsFixed(0) +" kcal",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.black,
