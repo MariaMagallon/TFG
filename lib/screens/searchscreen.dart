@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe_api.dart';
+import 'package:tfg/screens/detailscreen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -13,7 +14,8 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  bool isloading = false;
+  bool isloading=false;
+
   List<RecipeApi> recipes = [];
   TextEditingController _textEditingController = new TextEditingController();
   String applicationId = 'b702e461';
@@ -30,32 +32,54 @@ class _SearchScreenState extends State<SearchScreen> {
     String cadena =
         "http://www.edamam.com/ontologies/edamam.owl#recipe_0ec48df32629a4349a37af0fed9a6835";
     String subcadena;
-    subcadena = cadena.replaceAll("http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
+    subcadena = cadena.replaceAll(
+        "http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
     //print(subcadena);
     //print ("${response.body.toString()} this is response");
     recipes.clear();
     Map<String, dynamic> jsonData = jsonDecode(response.body);
     jsonData["hits"].forEach((element) {
-      RecipeApi recipeApi = RecipeApi(label: "label", image: "image",uri:"uri");
+      RecipeApi recipeApi =
+          RecipeApi(label: "label", image: "image", uri: "uri");
       recipeApi = RecipeApi.fromMap(element["recipe"]);
       recipes.add(recipeApi);
     });
     print("${recipes.toString()}");
   }
-
+  @override
+  void initState(){
+    super.initState();
+    isloading = false;
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope( 
+   
+    onWillPop: () async {
+        // Aquí es retorna cert o false segons si vols prevenir que es pugui tornar enrere
+        return true;
+    },
+    
+    child: Scaffold(
         appBar: AppBar(
           title: Text('AppName'),
-          flexibleSpace: Container(decoration: BoxDecoration(color: Colors.indigo)),
+          flexibleSpace:
+              Container(decoration: BoxDecoration(color: Colors.indigo)),
           actions: [
             IconButton(
               onPressed: () => {},
               icon: Icon(Icons.account_circle_rounded),
               iconSize: 30.0,
-            )
+            ),
+          
           ],
+          leading: 
+            IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(Icons.arrow_back_sharp),
+                iconSize: 30.0,
+          ),
         ),
         body: Stack(children: <Widget>[
           Container(
@@ -127,7 +151,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                       fontSize: 18,
                                       color: Colors.white,
                                     )),
-                                style: TextStyle(fontSize: 18, color: Colors.white)),
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
                           ),
                           SizedBox(
                             width: 16,
@@ -145,7 +170,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               }
                             },
                             child: Container(
-                              child: Icon(Icons.search, color: Colors.white, size: 50.0),
+                              child: Icon(Icons.search,
+                                  color: Colors.white, size: 50.0),
                             ),
                           )
                         ],
@@ -159,30 +185,42 @@ class _SearchScreenState extends State<SearchScreen> {
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
                               physics: ClampingScrollPhysics(),
-                              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
+                              gridDelegate:
+                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                                      maxCrossAxisExtent: 200,
+                                      mainAxisSpacing: 10.0),
                               children: List.generate(recipes.length, (index) {
                                 return GridTile(
                                     child: GestureDetector(
-                                       onTap: () {
-                                        print("${recipes[index].label}");
-                                        print("${recipes[index].uri}");
-                                        String idRecipe;
-                                        idRecipe = recipes[index].uri.replaceAll("http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
-                                        print("https://api.edamam.com/api/recipes/v2/$idRecipe?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1");
-                                      },
-                                    child: RecipeTile(
-                                        imageurl: recipes[index].image,
-                                        title: recipes[index].label)
-                                    )
-                                    );
+                                        onTap: () {
+                                          print("${recipes[index].label}");
+                                          print("${recipes[index].uri}");
+                                          String idRecipe;
+                                          idRecipe = recipes[index].uri.replaceAll(
+                                              "http://www.edamam.com/ontologies/edamam.owl#recipe_",
+                                              '');
+                                          print(
+                                              "https://api.edamam.com/api/recipes/v2/$idRecipe?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1");
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return DetalleScreen(
+                                                  PidRecipe: idRecipe,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                        child: RecipeTile(
+                                            imageurl: recipes[index].image,
+                                            title: recipes[index].label)));
                               }),
                             ),
                     )
                   ],
                 )),
           )
-        ]));
+        ])));
   }
 }
 
@@ -219,9 +257,12 @@ class _RecipeTileState extends State<RecipeTile> {
                 children: <Widget>[
                   Text(
                     widget.title,
-                    style:
-                        TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
+                  
                 ],
               ),
             ),
