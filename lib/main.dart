@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tfg/screens/detailscreen.dart';
+
 import 'package:tfg/screens/searchscreen.dart';
-import 'package:tfg/screens/detailscreen_state.dart';
+
 
 
 void main() {
