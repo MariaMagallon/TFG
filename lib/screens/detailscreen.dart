@@ -8,10 +8,10 @@ import 'package:tfg/models/recipe_api.dart';
 import 'package:tfg/models/recipe_detail.dart';
 import 'package:tfg/screens/searchscreen.dart';
 
-class DetalleScreen extends StatelessWidget {
+class DetailScreen extends StatelessWidget {
   final String PidRecipe;
 
-  DetalleScreen({
+  DetailScreen({
     Key? key,
     required this.PidRecipe,
   }) : super(key: key);
