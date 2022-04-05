@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tfg/widgets/auth_gate.dart';
 // Import the generated file
 import 'firebase_options.dart';
 import 'package:tfg/screens/searchscreen.dart';
@@ -9,7 +10,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(const AuthGate(app: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
