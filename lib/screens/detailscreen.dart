@@ -1,22 +1,28 @@
 import 'dart:convert';
 import 'dart:core';
-import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:tfg/models/recipe_api.dart';
 import 'package:tfg/models/recipe_detail.dart';
-import 'package:tfg/screens/searchscreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailScreen extends StatelessWidget {
-  final String PidRecipe;
+  String pidRecipe;
 
   DetailScreen({
     Key? key,
-    required this.PidRecipe,
+    required this.pidRecipe,
   }) : super(key: key);
 
-  RecipeDetail recipeDetail = RecipeDetail(label: "label", image: "image", uri: "uri", url: "url", calories: 0.0, ingredientLines: [], dishType: [], healthLabels: [], cuisineType: []);
+  RecipeDetail recipeDetail = RecipeDetail(
+      label: "label",
+      image: "image",
+      uri: "uri",
+      url: "url",
+      calories: 0.0,
+      ingredientLines: [],
+      dishType: [],
+      healthLabels: [],
+      cuisineType: []);
   bool isloading = false;
 
   String applicationId = 'b702e461';
@@ -24,20 +30,22 @@ class DetailScreen extends StatelessWidget {
 
   Future<RecipeDetail> getRecipe() async {
     final url = Uri.parse(
-        "https://api.edamam.com/api/recipes/v2/$PidRecipe?type=public&app_id=$applicationId&app_key=$applicationKey");
+        "https://api.edamam.com/api/recipes/v2/$pidRecipe?type=public&app_id=$applicationId&app_key=$applicationKey");
 
     var response = await http.get(url);
 
-    print(response);
+    //print(response);
 
     Map<String, dynamic> jsonData = jsonDecode(response.body);
 
     recipeDetail = RecipeDetail.fromMap(jsonData["recipe"]);
-    print(recipeDetail.label);
-    
+    //print(recipeDetail.label);
+
     return await recipeDetail;
   }
-
+void _launchURL() async {
+  if (!await launch(recipeDetail.url)) throw 'Could not launch'+ recipeDetail.url;
+}
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -48,13 +56,13 @@ class DetailScreen extends StatelessWidget {
         },
         child: Scaffold(
             appBar: AppBar(
-                title: Text('AppName'),
-                flexibleSpace:
-                    Container(decoration: BoxDecoration(color: Colors.indigo)),
+                title: const Text('AppName'),
+                flexibleSpace: Container(
+                    decoration: const BoxDecoration(color: Colors.indigo)),
                 actions: [
                   IconButton(
                     onPressed: () => {},
-                    icon: Icon(Icons.account_circle_rounded),
+                    icon: const Icon(Icons.account_circle_rounded),
                     iconSize: 30.0,
                   )
                 ],
@@ -62,7 +70,7 @@ class DetailScreen extends StatelessWidget {
                   onPressed: () => {
                     Navigator.pop(context),
                   },
-                  icon: Icon(Icons.arrow_back_sharp),
+                  icon: const Icon(Icons.arrow_back_sharp),
                   iconSize: 30.0,
                 )),
             body: FutureBuilder(
@@ -80,15 +88,12 @@ class DetailScreen extends StatelessWidget {
                     height: double.infinity,
                     child: Stack(
                       children: <Widget>[
-                        Container(
-                         
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Image.network(
-                              recipeDetail.image,
-                              fit: BoxFit.cover,
-                              height: size.height *0.55,
-                            ),
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: Image.network(
+                            recipeDetail.image,
+                            fit: BoxFit.cover,
+                            height: size.height * 0.55,
                           ),
                         ),
                         DraggableScrollableSheet(
@@ -101,7 +106,7 @@ class DetailScreen extends StatelessWidget {
                               child: Container(
                                 padding: const EdgeInsets.all(24),
                                 height: 1000,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(50),
@@ -110,12 +115,11 @@ class DetailScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Container(
-                                        child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: <Widget>[
                                         Container(
-                                            
                                             height: 5,
                                             width: 40,
                                             decoration: BoxDecoration(
@@ -124,33 +128,32 @@ class DetailScreen extends StatelessWidget {
                                                 border: Border.all(
                                                     color: Colors.grey))),
                                       ],
-                                    )),
-                                    SizedBox(
+                                    ),
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     Row(
                                       children: <Widget>[
                                         Text(
                                           recipeDetail.label,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 19,
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold),
                                         ),
-                                        Spacer(),
+                                        const Spacer(),
                                         IconButton(
                                           onPressed: () {},
                                           color: Colors.redAccent,
-                                          icon: Icon(Icons.favorite),
+                                          icon: const Icon(Icons.favorite),
                                           iconSize: 30,
                                         )
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
-                                    Container(
-                                        child: Row(
+                                    Row(
                                       children: <Widget>[
                                         Expanded(
                                           child: Container(
@@ -158,92 +161,102 @@ class DetailScreen extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(5),
                                                   border: Border.all(
-                                                      color: Colors.grey.withOpacity(0.3)))),
+                                                      color: Colors.grey
+                                                          .withOpacity(0.3)))),
                                         )
                                       ],
-                                    )),
-                                    SizedBox(
+                                    ),
+                                    const SizedBox(
                                       height: 20,
                                     ),
-                                    Container(
-                                        child: Row(
+                                    Row(
                                       children: <Widget>[
-                                          Expanded(
+                                        Expanded(
                                             child: Column(
                                           children: <Widget>[
-                                            Text(
+                                            const Text(
                                               "Cuisine Type",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.grey,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                          ListView.separated(
-                                          physics: ScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: recipeDetail.cuisineType.length,
-                                          separatorBuilder:
-                                              (BuildContext context, int index) {
-                                            return Divider(
-                                              color:Colors.black.withOpacity(0.3),
+                                            ListView.separated(
+                                              physics: const ScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: recipeDetail
+                                                  .cuisineType.length,
+                                              separatorBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Divider(
+                                                  color: Colors.black
+                                                      .withOpacity(0.3),
                                                 );
-                                          },
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Center(
-                                            
-                                              child: Text(
-                                              recipeDetail.cuisineType[index],
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            );
-                                          },
-                                        )
+                                              },
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Center(
+                                                  child: Text(
+                                                    recipeDetail
+                                                        .cuisineType[index],
+                                                    style: const TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                );
+                                              },
+                                            )
                                           ],
                                         )),
                                         Expanded(
                                             child: Column(
                                           children: <Widget>[
-                                            Text(
+                                            const Text(
                                               "Dish Type",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.grey,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                          ListView.separated(
-                                          physics: ScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: recipeDetail.dishType.length,
-                                          separatorBuilder:
-                                              (BuildContext context, int index) {
-                                            return Divider(
-                                              color:Colors.black.withOpacity(0.3),
+                                            ListView.separated(
+                                              physics: const ScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount:
+                                                  recipeDetail.dishType.length,
+                                              separatorBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Divider(
+                                                  color: Colors.black
+                                                      .withOpacity(0.3),
                                                 );
-                                          },
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Center(
-                                            
-                                              child: Text(
-                                              recipeDetail.dishType[index],
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            );
-                                          },
-                                        )
+                                              },
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Center(
+                                                  child: Text(
+                                                    recipeDetail
+                                                        .dishType[index],
+                                                    style: const TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                );
+                                              },
+                                            )
                                           ],
                                         )),
                                         Expanded(
                                             child: Column(
                                           children: <Widget>[
-                                            Text(
+                                            const Text(
                                               "Calories",
                                               style: TextStyle(
                                                   fontSize: 15,
@@ -251,8 +264,10 @@ class DetailScreen extends StatelessWidget {
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             Text(
-                                              recipeDetail.calories.toStringAsFixed(0) +" kcal",
-                                              style: TextStyle(
+                                              recipeDetail.calories
+                                                      .toStringAsFixed(0) +
+                                                  " kcal",
+                                              style: const TextStyle(
                                                   fontSize: 15,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold),
@@ -260,44 +275,63 @@ class DetailScreen extends StatelessWidget {
                                           ],
                                         ))
                                       ],
-                                    )),
-                                    SizedBox(
+                                    ),
+                                    const SizedBox(
                                       height: 20,
                                     ),
-                                    Text(
+                                    const Text(
                                       "Ingredients",
                                       style: TextStyle(
                                           fontSize: 22,
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
-                                    Expanded(
-                                        child: Column(
+                                     Column(
                                       children: <Widget>[
                                         ListView.separated(
-                                          physics: ScrollPhysics(),
+                                          physics: const ScrollPhysics(),
                                           shrinkWrap: true,
-                                          itemCount: recipeDetail.ingredientLines.length,
+                                          itemCount: recipeDetail
+                                              .ingredientLines.length,
                                           separatorBuilder:
-                                              (BuildContext context, int index) {
+                                              (BuildContext context,
+                                                  int index) {
                                             return Divider(
-                                              color:Colors.black.withOpacity(0.3),
-                                                );
+                                              color:
+                                                  Colors.black.withOpacity(0.3),
+                                            );
                                           },
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return Padding(
                                               padding:
-                                                  const EdgeInsets.symmetric(vertical: 5.0),
-                                              child: Text("· " + recipeDetail.ingredientLines[index]),
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 5.0),
+                                              child: Text("· " +
+                                                  recipeDetail
+                                                      .ingredientLines[index]),
                                             );
                                           },
                                         )
                                       ],
-                                    ))
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Center(
+                                      child: ElevatedButton(
+                                        onPressed: _launchURL,
+                                        child: const Text('Go to instructions'),
+                                        style: ElevatedButton.styleFrom(
+                                          onPrimary: Colors.white,
+                                          primary:Colors.indigo ,
+
+                                        ),
+                                    ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -310,3 +344,4 @@ class DetailScreen extends StatelessWidget {
                 })));
   }
 }
+

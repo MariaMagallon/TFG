@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe_api.dart';
 import 'package:tfg/screens/detailscreen.dart';
@@ -17,23 +16,20 @@ class _SearchScreenState extends State<SearchScreen> {
   bool isloading=false;
 
   List<RecipeApi> recipes = [];
-  TextEditingController _textEditingController = new TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
   String applicationId = 'b702e461';
   String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
 
   getRecipes(String query) async {
-    final urldet =
-        "https://api.edamam.com/api/recipes/v2/0ec48df32629a4349a37af0fed9a6835?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1";
+    //final urldet ="https://api.edamam.com/api/recipes/v2/0ec48df32629a4349a37af0fed9a6835?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1";
     //0ec48df32629a4349a37af0fed9a6835 id
     final url = Uri.parse(
         "https://api.edamam.com/api/recipes/v2?type=public&q=$query&app_id=$applicationId&app_key=$applicationKey");
     //final url = Uri.parse(cadena);
     var response = await http.get(url);
-    String cadena =
-        "http://www.edamam.com/ontologies/edamam.owl#recipe_0ec48df32629a4349a37af0fed9a6835";
-    String subcadena;
-    subcadena = cadena.replaceAll(
-        "http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
+    //String cadena = "http://www.edamam.com/ontologies/edamam.owl#recipe_0ec48df32629a4349a37af0fed9a6835";
+    //String subcadena;
+    //subcadena = cadena.replaceAll( "http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
     //print(subcadena);
     //print ("${response.body.toString()} this is response");
     recipes.clear();
@@ -44,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
       recipeApi = RecipeApi.fromMap(element["recipe"]);
       recipes.add(recipeApi);
     });
-    print("${recipes.toString()}");
+    //print("${recipes.toString()}");
   }
   @override
   void initState(){
@@ -63,13 +59,13 @@ class _SearchScreenState extends State<SearchScreen> {
     
     child: Scaffold(
         appBar: AppBar(
-          title: Text('AppName'),
+          title: const Text('AppName'),
           flexibleSpace:
-              Container(decoration: BoxDecoration(color: Colors.indigo)),
+              Container(decoration: const BoxDecoration(color: Colors.indigo)),
           actions: [
             IconButton(
               onPressed: () => {},
-              icon: Icon(Icons.account_circle_rounded),
+              icon: const Icon(Icons.account_circle_rounded),
               iconSize: 30.0,
             ),
           
@@ -77,7 +73,7 @@ class _SearchScreenState extends State<SearchScreen> {
           leading: 
             IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-                icon: Icon(Icons.arrow_back_sharp),
+                icon: const Icon(Icons.arrow_back_sharp),
                 iconSize: 30.0,
           ),
         ),
@@ -85,15 +81,15 @@ class _SearchScreenState extends State<SearchScreen> {
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(color: Colors.indigo),
+            decoration: const BoxDecoration(color: Colors.indigo),
           ),
           SingleChildScrollView(
             child: Container(
-                padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
                 child: Column(
                   children: <Widget>[
                     Row(
-                      children: <Widget>[
+                      children: const <Widget>[
                         Text(
                           "WELCOME USER",
                           style: TextStyle(
@@ -104,11 +100,11 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     Row(
-                      children: <Widget>[
+                      children: const <Widget>[
                         Text(
                           "What do want to cook today?",
                           style: TextStyle(
@@ -119,11 +115,11 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
-                      children: <Widget>[
+                      children: const <Widget>[
                         Expanded(
                           child: Text(
                             "Enter ingredients you have and we will show the best recipies for you",
@@ -135,7 +131,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     Container(
@@ -145,16 +141,16 @@ class _SearchScreenState extends State<SearchScreen> {
                           Expanded(
                             child: TextField(
                                 controller: _textEditingController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                     hintText: "Enter Ingridients",
                                     hintStyle: TextStyle(
                                       fontSize: 18,
                                       color: Colors.white,
                                     )),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 18, color: Colors.white)),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 16,
                           ),
                           InkWell(
@@ -169,43 +165,39 @@ class _SearchScreenState extends State<SearchScreen> {
                                 });
                               }
                             },
-                            child: Container(
-                              child: Icon(Icons.search,
-                                  color: Colors.white, size: 50.0),
-                            ),
+                            child: const Icon(Icons.search,
+                                color: Colors.white, size: 50.0),
                           )
                         ],
                       ),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     Container(
                       child: isloading
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : GridView(
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
-                              physics: ClampingScrollPhysics(),
+                              physics: const ClampingScrollPhysics(),
                               gridDelegate:
-                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
                                       maxCrossAxisExtent: 200,
                                       mainAxisSpacing: 10.0),
                               children: List.generate(recipes.length, (index) {
                                 return GridTile(
                                     child: GestureDetector(
                                         onTap: () {
-                                          print("${recipes[index].label}");
-                                          print("${recipes[index].uri}");
+                                          //print("${recipes[index].label}");
+                                          //print("${recipes[index].uri}");
                                           String idRecipe;
                                           idRecipe = recipes[index].uri.replaceAll(
-                                              "http://www.edamam.com/ontologies/edamam.owl#recipe_",
-                                              '');
-                                          print(
-                                              "https://api.edamam.com/api/recipes/v2/$idRecipe?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1");
+                                              "http://www.edamam.com/ontologies/edamam.owl#recipe_",'');
+                                          //print("https://api.edamam.com/api/recipes/v2/$idRecipe?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1");
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder: (context) {
                                                 return DetailScreen(
-                                                  PidRecipe: idRecipe,
+                                                  pidRecipe: idRecipe,
                                                 );
                                               },
                                             ),
@@ -227,7 +219,7 @@ class _SearchScreenState extends State<SearchScreen> {
 class RecipeTile extends StatefulWidget {
   final String title, imageurl;
 
-  RecipeTile({required this.title, required this.imageurl});
+  const RecipeTile({Key? key, required this.title, required this.imageurl}) : super(key: key);
 
   @override
   _RecipeTileState createState() => _RecipeTileState();
@@ -237,7 +229,7 @@ class _RecipeTileState extends State<RecipeTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       child: Stack(
         children: <Widget>[
           Image.network(
@@ -257,7 +249,7 @@ class _RecipeTileState extends State<RecipeTile> {
                 children: <Widget>[
                   Text(
                     widget.title,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 18,
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
