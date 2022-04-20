@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe_api.dart';
 import 'package:tfg/screens/detailscreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tfg/widgets/navigation_drawer_widget.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -13,8 +15,8 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  bool isloading=false;
-
+  bool isloading = false;
+  final user = FirebaseAuth.instance.currentUser!;
   List<RecipeApi> recipes = [];
   final TextEditingController _textEditingController = TextEditingController();
   String applicationId = 'b702e461';
@@ -42,184 +44,197 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     //print("${recipes.toString()}");
   }
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     isloading = false;
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope( 
-   
-    onWillPop: () async {
-        // Aquí es retorna cert o false segons si vols prevenir que es pugui tornar enrere
-        return true;
-    },
-    
-    child: Scaffold(
-        appBar: AppBar(
-          title: const Text('AppName'),
-          flexibleSpace:
-              Container(decoration: const BoxDecoration(color: Colors.indigo)),
-          actions: [
-            IconButton(
-              onPressed: () => {},
-              icon: const Icon(Icons.account_circle_rounded),
-              iconSize: 30.0,
-            ),
-          
-          ],
-          leading: 
-            IconButton(
-                onPressed: () => Navigator.of(context).pop(),
+    return WillPopScope(
+        onWillPop: () async {
+          // Aquí es retorna cert o false segons si vols prevenir que es pugui tornar enrere
+          return true;
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              title: const Text('AppName'),
+              flexibleSpace: Container(
+                  decoration: const BoxDecoration(color: Colors.indigo)),
+              actions: [
+                Builder(builder: (context) {
+                  return IconButton(
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                    icon: const Icon(Icons.account_circle_rounded),
+                    iconSize: 30.0,
+                  );
+                }),
+              ],
+              /*actions: [
+                IconButton(
+                  onPressed: () => FirebaseAuth.instance.signOut(),
+                  icon: const Icon(Icons.account_circle_rounded),
+                  iconSize: 30.0,
+                ),
+              ],*/
+              /*leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(context),
                 icon: const Icon(Icons.arrow_back_sharp),
                 iconSize: 30.0,
-          ),
-        ),
-        body: Stack(children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: const BoxDecoration(color: Colors.indigo),
-          ),
-          SingleChildScrollView(
-            child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: const <Widget>[
-                        Text(
-                          "WELCOME USER",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      children: const <Widget>[
-                        Text(
-                          "What do want to cook today?",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: const <Widget>[
-                        Expanded(
-                          child: Text(
-                            "Enter ingredients you have and we will show the best recipies for you",
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.white,
+              ),*/
+            ),
+            endDrawer: const NavigationDrawerWidget(),
+            body: Stack(children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(color: Colors.indigo),
+              ),
+              SingleChildScrollView(
+                child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 30, horizontal: 30),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              user.email!,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Row(
+                          children: const <Widget>[
+                            Text(
+                              "What do want to cook today?",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: const <Widget>[
+                            Expanded(
+                              child: Text(
+                                "Enter ingredients you have and we will show the best recipies for you",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: TextField(
+                                    controller: _textEditingController,
+                                    decoration: const InputDecoration(
+                                        hintText: "Enter Ingridients",
+                                        hintStyle: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                        )),
+                                    style: const TextStyle(
+                                        fontSize: 18, color: Colors.white)),
+                              ),
+                              const SizedBox(
+                                width: 16,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  if (_textEditingController.text.isNotEmpty) {
+                                    setState(() {
+                                      isloading = true;
+                                    });
+                                    getRecipes(_textEditingController.text);
+                                    setState(() {
+                                      isloading = false;
+                                    });
+                                  }
+                                },
+                                child: const Icon(Icons.search,
+                                    color: Colors.white, size: 50.0),
+                              )
+                            ],
                           ),
+                        ),
+                        const SizedBox(height: 25),
+                        Container(
+                          child: isloading
+                              ? const CircularProgressIndicator()
+                              : GridView(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  physics: const ClampingScrollPhysics(),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                                          maxCrossAxisExtent: 200,
+                                          mainAxisSpacing: 10.0),
+                                  children:
+                                      List.generate(recipes.length, (index) {
+                                    return GridTile(
+                                        child: GestureDetector(
+                                            onTap: () {
+                                              //print("${recipes[index].label}");
+                                              //print("${recipes[index].uri}");
+                                              String idRecipe;
+                                              idRecipe = recipes[index]
+                                                  .uri
+                                                  .replaceAll(
+                                                      "http://www.edamam.com/ontologies/edamam.owl#recipe_",
+                                                      '');
+                                              //print("https://api.edamam.com/api/recipes/v2/$idRecipe?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1");
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return DetailScreen(
+                                                      pidRecipe: idRecipe,
+                                                    );
+                                                  },
+                                                ),
+                                              );
+                                            },
+                                            child: RecipeTile(
+                                                imageurl: recipes[index].image,
+                                                title: recipes[index].label)));
+                                  }),
+                                ),
                         )
                       ],
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: TextField(
-                                controller: _textEditingController,
-                                decoration: const InputDecoration(
-                                    hintText: "Enter Ingridients",
-                                    hintStyle: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                    )),
-                                style: const TextStyle(
-                                    fontSize: 18, color: Colors.white)),
-                          ),
-                          const SizedBox(
-                            width: 16,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              if (_textEditingController.text.isNotEmpty) {
-                                setState(() {
-                                  isloading = true;
-                                });
-                                getRecipes(_textEditingController.text);
-                                setState(() {
-                                  isloading = false;
-                                });
-                              }
-                            },
-                            child: const Icon(Icons.search,
-                                color: Colors.white, size: 50.0),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 25),
-                    Container(
-                      child: isloading
-                          ? const CircularProgressIndicator()
-                          : GridView(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              physics: const ClampingScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                      maxCrossAxisExtent: 200,
-                                      mainAxisSpacing: 10.0),
-                              children: List.generate(recipes.length, (index) {
-                                return GridTile(
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          //print("${recipes[index].label}");
-                                          //print("${recipes[index].uri}");
-                                          String idRecipe;
-                                          idRecipe = recipes[index].uri.replaceAll(
-                                              "http://www.edamam.com/ontologies/edamam.owl#recipe_",'');
-                                          //print("https://api.edamam.com/api/recipes/v2/$idRecipe?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1");
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) {
-                                                return DetailScreen(
-                                                  pidRecipe: idRecipe,
-                                                );
-                                              },
-                                            ),
-                                          );
-                                        },
-                                        child: RecipeTile(
-                                            imageurl: recipes[index].image,
-                                            title: recipes[index].label)));
-                              }),
-                            ),
-                    )
-                  ],
-                )),
-          )
-        ])));
+                    )),
+              )
+            ])));
   }
 }
 
 class RecipeTile extends StatefulWidget {
   final String title, imageurl;
 
-  const RecipeTile({Key? key, required this.title, required this.imageurl}) : super(key: key);
+  const RecipeTile({Key? key, required this.title, required this.imageurl})
+      : super(key: key);
 
   @override
   _RecipeTileState createState() => _RecipeTileState();
@@ -254,7 +269,6 @@ class _RecipeTileState extends State<RecipeTile> {
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
-                  
                 ],
               ),
             ),

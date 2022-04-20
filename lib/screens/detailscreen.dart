@@ -3,7 +3,12 @@ import 'dart:core';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe_detail.dart';
+import 'package:tfg/widgets/navigation_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+final db = FirebaseFirestore.instance;
 
 class DetailScreen extends StatelessWidget {
   String pidRecipe;
@@ -24,7 +29,7 @@ class DetailScreen extends StatelessWidget {
       healthLabels: [],
       cuisineType: []);
   bool isloading = false;
-
+  final user = FirebaseAuth.instance.currentUser!;
   String applicationId = 'b702e461';
   String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
 
@@ -41,11 +46,15 @@ class DetailScreen extends StatelessWidget {
     recipeDetail = RecipeDetail.fromMap(jsonData["recipe"]);
     //print(recipeDetail.label);
 
-    return await recipeDetail;
+    return  recipeDetail;
   }
-void _launchURL() async {
-  if (!await launch(recipeDetail.url)) throw 'Could not launch'+ recipeDetail.url;
-}
+
+  void _launchURL() async {
+    if (!await launch(recipeDetail.url)) {
+      throw 'Could not launch' + recipeDetail.url;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -61,7 +70,7 @@ void _launchURL() async {
                     decoration: const BoxDecoration(color: Colors.indigo)),
                 actions: [
                   IconButton(
-                    onPressed: () => {},
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
                     icon: const Icon(Icons.account_circle_rounded),
                     iconSize: 30.0,
                   )
@@ -73,6 +82,7 @@ void _launchURL() async {
                   icon: const Icon(Icons.arrow_back_sharp),
                   iconSize: 30.0,
                 )),
+            endDrawer: const NavigationDrawerWidget(),
             body: FutureBuilder(
                 future: getRecipe(),
                 builder: (context, AsyncSnapshot<RecipeDetail> snapshot) {
@@ -143,7 +153,9 @@ void _launchURL() async {
                                         ),
                                         const Spacer(),
                                         IconButton(
-                                          onPressed: () {},
+                                          onPressed: () async {
+                                            await createRecipeAPI(recipeDetail);
+                                          },
                                           color: Colors.redAccent,
                                           icon: const Icon(Icons.favorite),
                                           iconSize: 30,
@@ -289,7 +301,7 @@ void _launchURL() async {
                                     const SizedBox(
                                       height: 20,
                                     ),
-                                     Column(
+                                    Column(
                                       children: <Widget>[
                                         ListView.separated(
                                           physics: const ScrollPhysics(),
@@ -327,10 +339,9 @@ void _launchURL() async {
                                         child: const Text('Go to instructions'),
                                         style: ElevatedButton.styleFrom(
                                           onPrimary: Colors.white,
-                                          primary:Colors.indigo ,
-
+                                          primary: Colors.indigo,
                                         ),
-                                    ),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -344,4 +355,3 @@ void _launchURL() async {
                 })));
   }
 }
-
