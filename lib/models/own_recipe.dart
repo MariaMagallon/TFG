@@ -1,23 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+
 final user = FirebaseAuth.instance.currentUser!;
 
 class OwnRecipe {
   String? id;
-  late String label;
+  late String label, image, description;
 
-  OwnRecipe({required this.label});
+  OwnRecipe({required this.label, required this.image, required this.description});
   Map<String, dynamic> toJson() => {
         'label': label,
+        'image':image,
+        'description':description
+        
       };
 
-  OwnRecipe.fromFirestore(String _id, Map<String, dynamic> data)
-      : id = _id,
-        label = data['label'];
+  OwnRecipe.fromFirestore(this.id, Map<String, dynamic> data)
+      : 
+        label = data['label'],
+        image= data['image'];
 
   Map<String, dynamic> toFirestore() => {
         'label': label,
+        'image':image,
+        'description':description
       };
 }
 
@@ -34,11 +41,13 @@ Stream<List<OwnRecipe>> loadUserRecipes() {
   });
 }
 
-void createRecipe(OwnRecipe ownRecipe) async {
+
+Future<void> createRecipe(OwnRecipe ownRecipe) async {
   final db = FirebaseFirestore.instance;
-  final docref = db
-      .collection("userData")
+  final docref = await db.collection("userData")
       .doc(user.uid)
       .collection("recipes")
       .add(ownRecipe.toFirestore());
+  ownRecipe.id = docref.id;
+  ownRecipe.id = docref.id.toString();
 }

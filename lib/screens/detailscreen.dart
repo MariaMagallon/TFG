@@ -81,7 +81,8 @@ class DetailScreen extends StatelessWidget {
                   },
                   icon: const Icon(Icons.arrow_back_sharp),
                   iconSize: 30.0,
-                )),
+                )
+                ),
             endDrawer: const NavigationDrawerWidget(),
             body: FutureBuilder(
                 future: getRecipe(),
