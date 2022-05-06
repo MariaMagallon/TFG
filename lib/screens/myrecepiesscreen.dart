@@ -63,7 +63,7 @@ class MyRecipes extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => CreateRecipeScreen(),
+                    builder: (context) => const CreateRecipeScreen(),
                   ));
                 },
                 child: const Text(
@@ -80,6 +80,7 @@ class MyRecipes extends StatelessWidget {
               height: 30,
             ),
             _RecipesAPI(),
+            _RecipesUser(),
             
           ],
         )));
@@ -213,5 +214,91 @@ class _RecipeTileState extends State<RecipeTile> {
             ),
           );
         });
+  }
+}
+
+class _RecipesUser extends StatelessWidget {
+  _RecipesUser({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: loadUserRecipes(),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<OwnRecipe>> snapshot) {
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error.toString());
+        }
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final _recipesAPI = snapshot.data!;
+
+        return GridView(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            physics: const ClampingScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
+            children: List.generate(_recipesAPI.length, (index) {
+              return GridTile(
+                  child: GestureDetector(
+                      child: RecipeTileUser(
+                          imageurl: _recipesAPI[index].image,
+                          title: _recipesAPI[index].label)));
+            }));
+      },
+    );
+  }
+}
+
+class RecipeTileUser extends StatefulWidget {
+  final String title, imageurl;
+
+  const RecipeTileUser({Key? key, required this.title, required this.imageurl})
+      : super(key: key);
+
+  @override
+  _RecipeTileUserState createState() => _RecipeTileUserState();
+}
+
+class _RecipeTileUserState extends State<RecipeTileUser> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      child: Stack(
+        children: <Widget>[
+          Image.network(
+            widget.imageurl,
+            height: 200,
+            width: 200,
+            fit: BoxFit.cover,
+          ),
+          Container(
+            width: 200,
+            alignment: Alignment.bottomLeft,
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.5)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    widget.title,
+                    style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
