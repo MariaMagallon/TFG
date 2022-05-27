@@ -3,7 +3,8 @@ import 'dart:core';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe_api.dart';
-import 'package:tfg/screens/detailscreen.dart';
+//import 'package:tfg/screens/detailscreen.dart';
+import 'package:tfg/screens/detailscreenunified.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
 
@@ -198,19 +199,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                     return GridTile(
                                         child: GestureDetector(
                                             onTap: () {
-                                              //print("${recipes[index].label}");
-                                              //print("${recipes[index].uri}");
                                               String idRecipe;
-                                              idRecipe = recipes[index]
-                                                  .uri
-                                                  .replaceAll(
-                                                      "http://www.edamam.com/ontologies/edamam.owl#recipe_",
-                                                      '');
-                                              //print("https://api.edamam.com/api/recipes/v2/$idRecipe?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1");
+                                              idRecipe =
+                                                  edamamId(recipes[index].uri);
+
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (context) {
                                                     return DetailScreen(
+                                                      api: true,
                                                       pidRecipe: idRecipe,
                                                     );
                                                   },

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class AuthGate extends StatelessWidget {
   final Widget app;
   const AuthGate({Key? key, required this.app}) : super(key: key);
@@ -18,8 +17,7 @@ class AuthGate extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             home: SignInScreen(
               providerConfigs: [
-                 EmailProviderConfiguration(),
-               
+                EmailProviderConfiguration(),
               ],
             ),
           );

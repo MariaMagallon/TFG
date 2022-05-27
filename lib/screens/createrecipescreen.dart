@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tfg/models/own_recipe.dart';
+//import 'package:tfg/models/own_recipe.dart';
+import 'package:tfg/models/recipe.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
 
@@ -28,16 +29,17 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
   late TextEditingController controllercuisine;
 
   final user = FirebaseAuth.instance.currentUser!;
-  late OwnRecipe ownRecipe = OwnRecipe(
-    label: "label",
-    image: "image",
-    description: "description",
-    calories: 0.0,
-    ingredientLines: [],
-    healthLabels: [],
-    dishType: [],
-    cuisineType: [],
-  );
+  Recipe recipe = Recipe(
+      label: "label",
+      image: "image",
+      uri: "uri",
+      url: "url",
+      calories: 0.0,
+      ingredientLines: [],
+      dishType: [],
+      healthLabels: [],
+      cuisineType: []);
+
   String imageName = "";
   XFile? imagePath;
   final ImagePicker _picker = ImagePicker();
@@ -131,7 +133,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
   _addHealth(String text) {
     if (text.isNotEmpty) {
       setState(() {
-        ownRecipe.healthLabels.add(text);
+        recipe.healthLabels.add(text);
       });
       controllerhealth.clear();
     }
@@ -152,7 +154,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
   _addCuisine(String text) {
     if (text.isNotEmpty) {
       setState(() {
-        ownRecipe.cuisineType.add(text);
+        recipe.cuisineType.add(text);
       });
       controllercuisine.clear();
     }
@@ -173,7 +175,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
   _addDish(String text) {
     if (text.isNotEmpty) {
       setState(() {
-        ownRecipe.dishType.add(text);
+        recipe.dishType.add(text);
       });
       controllerdish.clear();
     }
@@ -194,14 +196,14 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
   _addSubingredient(String text) {
     if (text.isNotEmpty) {
       setState(() {
-        ownRecipe.ingredientLines.add(text);
+        recipe.ingredientLines.add(text);
       });
       controlleringredient.clear();
     }
   }
 
   void _removeField(int index) {
-    ownRecipe.ingredientLines.removeAt(index);
+    recipe.ingredientLines.removeAt(index);
     //widget.onUpdate(fields);
     setState(() {});
   }
@@ -315,7 +317,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                             crossAxisCount: 3,
                             crossAxisSpacing: 4,
                             mainAxisSpacing: 4,
-                            children: ownRecipe.ingredientLines
+                            children: recipe.ingredientLines
                                 .map(
                                   (ingredient) => Card(
                                     color: Colors.indigo,
@@ -323,8 +325,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                                       child: Text(
                                         ingredient,
                                         style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14),
+                                            color: Colors.white, fontSize: 14),
                                       ),
                                     ),
                                   ),
@@ -358,7 +359,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                             crossAxisCount: 3,
                             crossAxisSpacing: 4,
                             mainAxisSpacing: 4,
-                            children: ownRecipe.healthLabels
+                            children: recipe.healthLabels
                                 .map(
                                   (health) => Card(
                                     color: Colors.indigo,
@@ -366,8 +367,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                                       child: Text(
                                         health,
                                         style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14),
+                                            color: Colors.white, fontSize: 14),
                                       ),
                                     ),
                                   ),
@@ -401,7 +401,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                             crossAxisCount: 3,
                             crossAxisSpacing: 4,
                             mainAxisSpacing: 4,
-                            children: ownRecipe.dishType
+                            children: recipe.dishType
                                 .map(
                                   (dish) => Card(
                                     color: Colors.indigo,
@@ -409,8 +409,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                                       child: Text(
                                         dish,
                                         style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14),
+                                            color: Colors.white, fontSize: 14),
                                       ),
                                     ),
                                   ),
@@ -444,7 +443,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                             crossAxisCount: 3,
                             crossAxisSpacing: 4,
                             mainAxisSpacing: 4,
-                            children: ownRecipe.cuisineType
+                            children: recipe.cuisineType
                                 .map(
                                   (cuisine) => Card(
                                     color: Colors.indigo,
@@ -452,8 +451,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                                       child: Text(
                                         cuisine,
                                         style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14),
+                                            color: Colors.white, fontSize: 14),
                                       ),
                                     ),
                                   ),
@@ -464,11 +462,12 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                           Center(
                             child: ElevatedButton(
                               onPressed: () async {
-                                ownRecipe.label = controllerlabel.text;
-                                ownRecipe.calories =
+                                recipe.label = controllerlabel.text;
+                                recipe.calories =
                                     double.tryParse(controllercalories.text)!;
-                                await createRecipe(ownRecipe);
-                                _uploadImage(ownRecipe.id!);
+                                recipe.isapi = 0;
+                                await createRecipe(recipe);
+                                await _uploadImage(recipe.id!);
                               },
                               child: const Text(
                                 'Save Recipe',
@@ -488,72 +487,4 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
   }
 }
 
-/*class IngredientsSection extends StatefulWidget {
-  IngredientsSection({Key? key, required this.onUpdate}) : super(key: key);
 
-  final ValueChanged<List<Map<String, String>>> onUpdate;
-  final Uuid uuid = Uuid();
-
-  @override
-  _IngredientsSectionState createState() => _IngredientsSectionState();
-}
-
-class _IngredientsSectionState extends State<IngredientsSection> {
-  final List<Map<String, String>> fields = [];
-
-  void _addField() {
-    fields.add({widget.uuid.v1(): ''});
-    setState(() {});
-  }
-
-  void _updateField(String value, int index) {
-    final key = fields[index].keys.first;
-    fields[index][key] = value;
-    widget.onUpdate(fields);
-  }
-
-  void _removeField(int index) {
-    fields.removeAt(index);
-    widget.onUpdate(fields);
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'Add ingredients',
-        ),
-        SizedBox(height: 15),
-        for (var i = 0; i < fields.length; i++)
-          Row(
-            
-            children: [
-              Expanded(
-                child: TextField(
-                  onChanged: (value) {
-                    _updateField(value, i);
-                  },
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  _removeField(i);
-                },
-                icon: const Icon(Icons.remove),
-                iconSize: 30.0,
-              )
-            ],
-          ),
-        ElevatedButton(
-          onPressed: () {
-            // TODO add field
-            _addField();
-          },
-          child: Text('+ Add field'),
-        ),
-      ],
-    );
-  }
-}*/

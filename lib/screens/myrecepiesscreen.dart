@@ -1,19 +1,20 @@
 import 'dart:convert';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tfg/models/own_recipe.dart';
+//import 'package:tfg/models/own_recipe.dart';
+import 'package:tfg/models/recipe.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tfg/models/recipe_detail.dart';
+//import 'package:tfg/models/recipe_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:tfg/screens/createrecipescreen.dart';
+import 'package:tfg/screens/detailscreenunified.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
 
 final db = FirebaseFirestore.instance;
 
 class MyRecipes extends StatelessWidget {
   final user = FirebaseAuth.instance.currentUser!;
- 
 
   MyRecipes({Key? key}) : super(key: key);
 
@@ -81,7 +82,6 @@ class MyRecipes extends StatelessWidget {
             ),
             _RecipesAPI(),
             _RecipesUser(),
-            
           ],
         )));
   }
@@ -95,16 +95,15 @@ class _RecipesAPI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: loadUserRecipesAPI(),
-      builder:
-          (BuildContext context, AsyncSnapshot<List<RecipeDetail>> snapshot) {
+      stream: loadRecipes(1),
+      builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error.toString());
         }
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
-        final _recipesAPI = snapshot.data!;
+        final _listrecipesAPI = snapshot.data!;
 
         return GridView(
             shrinkWrap: true,
@@ -112,13 +111,27 @@ class _RecipesAPI extends StatelessWidget {
             physics: const ClampingScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
-            children: List.generate(_recipesAPI.length, (index) {
+            children: List.generate(_listrecipesAPI.length, (index) {
               return GridTile(
                   child: GestureDetector(
+                      onTap: () {
+                        String idRecipe;
+                        idRecipe = _listrecipesAPI[index].idapi!;
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DetailScreen(
+                                api: true,
+                                pidRecipe: idRecipe,
+                              );
+                            },
+                          ),
+                        );
+                      },
                       child: RecipeTile(
-                          id: _recipesAPI[index].id!,
-                          imageurl: _recipesAPI[index].image,
-                          title: _recipesAPI[index].label)));
+                          id: _listrecipesAPI[index].idapi!,
+                          imageurl: _listrecipesAPI[index].image,
+                          title: _listrecipesAPI[index].label)));
             }));
       },
     );
@@ -137,7 +150,7 @@ class RecipeTile extends StatefulWidget {
 }
 
 class _RecipeTileState extends State<RecipeTile> {
-  RecipeDetail recipeDetail = RecipeDetail(
+  Recipe recipeDetail = Recipe(
       label: "label",
       image: "image",
       uri: "uri",
@@ -147,7 +160,8 @@ class _RecipeTileState extends State<RecipeTile> {
       dishType: [],
       healthLabels: [],
       cuisineType: []);
-  Future<RecipeDetail> getRecipe(String idrecipe) async {
+
+  Future<Recipe> getRecipe(String idrecipe) async {
     String applicationId = 'b702e461';
     String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
 
@@ -160,7 +174,7 @@ class _RecipeTileState extends State<RecipeTile> {
 
     Map<String, dynamic> jsonData = jsonDecode(response.body);
 
-    recipeDetail = RecipeDetail.fromMap(jsonData["recipe"]);
+    recipeDetail = Recipe.fromMap(jsonData["recipe"]);
     //print(recipeDetail.label);
 
     return recipeDetail;
@@ -170,7 +184,7 @@ class _RecipeTileState extends State<RecipeTile> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: getRecipe(widget.id),
-        builder: (context, AsyncSnapshot<RecipeDetail> snapshot) {
+        builder: (context, AsyncSnapshot<Recipe> snapshot) {
           if (snapshot.hasError) {
             return ErrorWidget(snapshot.error.toString());
           }
@@ -225,16 +239,15 @@ class _RecipesUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: loadUserRecipes(),
-      builder:
-          (BuildContext context, AsyncSnapshot<List<OwnRecipe>> snapshot) {
+      stream: loadRecipes(0),
+      builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error.toString());
         }
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
-        final _recipesAPI = snapshot.data!;
+        final _listrecipesUser = snapshot.data!;
 
         return GridView(
             shrinkWrap: true,
@@ -242,12 +255,26 @@ class _RecipesUser extends StatelessWidget {
             physics: const ClampingScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
-            children: List.generate(_recipesAPI.length, (index) {
+            children: List.generate(_listrecipesUser.length, (index) {
               return GridTile(
                   child: GestureDetector(
+                      onTap: () {
+                        String idRecipe;
+                        idRecipe = _listrecipesUser[index].id!;
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DetailScreen(
+                                api: false,
+                                pidRecipe: idRecipe,
+                              );
+                            },
+                          ),
+                        );
+                      },
                       child: RecipeTileUser(
-                          imageurl: _recipesAPI[index].image,
-                          title: _recipesAPI[index].label)));
+                          imageurl: _listrecipesUser[index].image,
+                          title: _listrecipesUser[index].label)));
             }));
       },
     );
