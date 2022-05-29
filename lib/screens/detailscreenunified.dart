@@ -12,10 +12,8 @@ final db = FirebaseFirestore.instance;
 
 class DetailScreen extends StatelessWidget {
   String pidRecipe;
-  bool api;
-
-  DetailScreen({Key? key, required this.pidRecipe, required this.api})
-      : super(key: key);
+  //bool api;
+  int origen;
 
   Recipe recipeDetail = Recipe(
       label: "label",
@@ -27,13 +25,18 @@ class DetailScreen extends StatelessWidget {
       dishType: [],
       healthLabels: [],
       cuisineType: []);
+
+  DetailScreen({Key? key, required this.pidRecipe, required this.origen})
+      : super(key: key);
+
+  
   bool isloading = false;
   final user = FirebaseAuth.instance.currentUser!;
   String applicationId = 'b702e461';
   String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
 
-  Future<Recipe> getRecipe(bool api) async {
-    if (api) {
+  Future<Recipe> getRecipe(int origen) async {
+    if (origen==0) {
       final url = Uri.parse(
           "https://api.edamam.com/api/recipes/v2/$pidRecipe?type=public&app_id=$applicationId&app_key=$applicationKey");
 
@@ -49,7 +52,6 @@ class DetailScreen extends StatelessWidget {
     } else {
       return getFirestoreRecipe(pidRecipe);
     }
-    
   }
 
   void _launchURL() async {
@@ -87,7 +89,7 @@ class DetailScreen extends StatelessWidget {
                 )),
             endDrawer: const NavigationDrawerWidget(),
             body: FutureBuilder(
-                future: getRecipe(api),
+                future: getRecipe(origen),
                 builder: (context, AsyncSnapshot<Recipe> snapshot) {
                   if (snapshot.hasError) {
                     return ErrorWidget(snapshot.error.toString());
@@ -164,9 +166,25 @@ class DetailScreen extends StatelessWidget {
                                             await createRecipe(recipeDetail);
                                           },
                                           color: Colors.redAccent,
-                                          icon: const Icon(Icons.favorite),
+                                          icon: const Icon(Icons.save),
                                           iconSize: 30,
-                                        )
+                                        ),
+                                        const Spacer(),
+                                        //casos origen = firestore API (1) i firestore own(2) mostrar boto delete de firestore
+                                        origen>=1 ? 
+                                        IconButton(
+                                          onPressed: () async {
+                                            await deleteFirestoreRecipe(recipeDetail.id!);
+                                            if(recipeDetail.isapi==0){
+                                              await deleteFirestoreStorage(recipeDetail.image);
+                                            }
+                                            Navigator.pop(context);
+
+                                          },
+                                          color: Colors.redAccent,
+                                          icon: const Icon(Icons.delete),
+                                          iconSize: 30,
+                                        ):const Text("save"),
                                       ],
                                     ),
                                     const SizedBox(
@@ -340,16 +358,22 @@ class DetailScreen extends StatelessWidget {
                                     const SizedBox(
                                       height: 20,
                                     ),
-                                    Center(
-                                      child: ElevatedButton(
-                                        onPressed: _launchURL,
-                                        child: const Text('Go to instructions'),
-                                        style: ElevatedButton.styleFrom(
-                                          onPrimary: Colors.white,
-                                          primary: Colors.indigo,
-                                        ),
-                                      ),
-                                    ),
+                                //casos origen = API pur (0) i firestore API(1) //ha d'apareixer boto instruc o camp descripcio propia
+                                    origen<=1 
+                                        ? Center(
+                                            child: ElevatedButton(
+                                              onPressed: _launchURL,
+                                              child: const Text(
+                                                  'Go to instructions'),
+                                              style: ElevatedButton.styleFrom(
+                                                onPrimary: Colors.white,
+                                                primary: Colors.indigo,
+                                              ),
+                                            ),
+                                          )
+                                        : Center(
+                                            child: Text(
+                                                recipeDetail.description!)),
                                   ],
                                 ),
                               ),

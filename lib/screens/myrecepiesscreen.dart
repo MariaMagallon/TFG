@@ -116,12 +116,12 @@ class _RecipesAPI extends StatelessWidget {
                   child: GestureDetector(
                       onTap: () {
                         String idRecipe;
-                        idRecipe = _listrecipesAPI[index].idapi!;
+                        idRecipe = _listrecipesAPI[index].id!;
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) {
                               return DetailScreen(
-                                api: true,
+                                origen: 1,
                                 pidRecipe: idRecipe,
                               );
                             },
@@ -130,7 +130,7 @@ class _RecipesAPI extends StatelessWidget {
                       },
                       child: RecipeTile(
                           id: _listrecipesAPI[index].idapi!,
-                          imageurl: _listrecipesAPI[index].image,
+                          imageurl: _listrecipesAPI[index].image, //TODO: eliminar contenido por no actualizado 
                           title: _listrecipesAPI[index].label)));
             }));
       },
@@ -161,7 +161,9 @@ class _RecipeTileState extends State<RecipeTile> {
       healthLabels: [],
       cuisineType: []);
 
-  Future<Recipe> getRecipe(String idrecipe) async {
+//TODO: unificar getRecipeFromAPI amb el case origen 0 de detailscreen a getRecipe
+
+  Future<Recipe> getRecipeFromAPI(String idrecipe) async {
     String applicationId = 'b702e461';
     String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
 
@@ -183,7 +185,7 @@ class _RecipeTileState extends State<RecipeTile> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getRecipe(widget.id),
+        future: getRecipeFromAPI(widget.id),
         builder: (context, AsyncSnapshot<Recipe> snapshot) {
           if (snapshot.hasError) {
             return ErrorWidget(snapshot.error.toString());
@@ -265,7 +267,7 @@ class _RecipesUser extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) {
                               return DetailScreen(
-                                api: false,
+                                origen: 2,
                                 pidRecipe: idRecipe,
                               );
                             },

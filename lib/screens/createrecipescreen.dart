@@ -22,6 +22,7 @@ class CreateRecipeScreen extends StatefulWidget {
 
 class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
   late TextEditingController controllerlabel;
+  late TextEditingController controllerdescription;
   late TextEditingController controllercalories;
   late TextEditingController controlleringredient;
   late TextEditingController controllerdish;
@@ -50,6 +51,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
   void initState() {
     super.initState();
     controllerlabel = TextEditingController();
+    controllerdescription=TextEditingController();
     controllercalories = TextEditingController();
     controlleringredient = TextEditingController();
     controllerhealth = TextEditingController();
@@ -266,6 +268,19 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                                 controller: controllerlabel),
                           ),
                           const SizedBox(height: 30),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 40.0, right: 40.0),
+                            child: TextField(
+                                style: const TextStyle(color: Colors.black),
+                                decoration: const InputDecoration(
+                                  labelText: "Instructions",
+                                  filled: true,
+                                  fillColor: Color.fromRGBO(255, 255, 255, 0.5),
+                                ),
+                                controller: controllerdescription),
+                          ),
+                          const SizedBox(height: 30),
                           imageName == "" ? Container() : Text(imageName),
                           const SizedBox(height: 10),
                           Padding(
@@ -465,6 +480,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen> {
                                 recipe.label = controllerlabel.text;
                                 recipe.calories =
                                     double.tryParse(controllercalories.text)!;
+                                recipe.description=controllerdescription.text;
                                 recipe.isapi = 0;
                                 await createRecipe(recipe);
                                 await _uploadImage(recipe.id!);

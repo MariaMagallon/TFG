@@ -207,8 +207,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 MaterialPageRoute(
                                                   builder: (context) {
                                                     return DetailScreen(
-                                                      api: true,
+                                                      origen: 0,
                                                       pidRecipe: idRecipe,
+                                                      
                                                     );
                                                   },
                                                 ),
