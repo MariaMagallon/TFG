@@ -3,16 +3,17 @@ import 'dart:core';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe.dart';
+import 'package:tfg/screens/createrecipescreen.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tfg/constants/apikeys.dart';
 
 final db = FirebaseFirestore.instance;
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends StatefulWidget {
   String pidRecipe;
-  //bool api;
   int origen;
 
   Recipe recipeDetail = Recipe(
@@ -26,37 +27,75 @@ class DetailScreen extends StatelessWidget {
       healthLabels: [],
       cuisineType: []);
 
-  DetailScreen({Key? key, required this.pidRecipe, required this.origen})
+  DetailScreen(
+      {Key? key,
+      required this.pidRecipe,
+      required this.origen,
+      required this.recipeDetail})
       : super(key: key);
 
-  
-  bool isloading = false;
-  final user = FirebaseAuth.instance.currentUser!;
-  String applicationId = 'b702e461';
-  String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
+  @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
 
-  Future<Recipe> getRecipe(int origen) async {
-    if (origen==0) {
+class _DetailScreenState extends State<DetailScreen> {
+  bool isloading = false;
+
+  final user = FirebaseAuth.instance.currentUser!;
+
+  Future<Recipe> getRecipe(int origen, Recipe recipeDetail) async {
+    if (origen == 2) {
+      return recipeDetail;
+    } else {
       final url = Uri.parse(
-          "https://api.edamam.com/api/recipes/v2/$pidRecipe?type=public&app_id=$applicationId&app_key=$applicationKey");
+          "https://api.edamam.com/api/recipes/v2/${widget.pidRecipe}?type=public&app_id=$applicationId&app_key=$applicationKey");
 
       var response = await http.get(url);
 
-      //print(response);
-
       Map<String, dynamic> jsonData = jsonDecode(response.body);
-
-      recipeDetail = Recipe.fromMap(jsonData["recipe"]);
-      return recipeDetail;
-      //print(recipeDetail.label);
-    } else {
-      return getFirestoreRecipe(pidRecipe);
+      Recipe recipeAux;
+      recipeAux = Recipe.fromMap(jsonData["recipe"]);
+      if (origen == 0) {
+        recipeAux.description = "This recipe comes from the API";
+        return recipeAux;
+      } else {
+        recipeDetail.image = recipeAux.image;
+        return recipeDetail;
+      }
     }
   }
 
+  Future<void> _showMyDialog(
+      BuildContext context, String ptitle, String pcontent) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(ptitle),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(pcontent),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _launchURL() async {
-    if (!await launch(recipeDetail.url)) {
-      throw 'Could not launch' + recipeDetail.url;
+    if (!await launch(widget.recipeDetail.url)) {
+      throw 'Could not launch' + widget.recipeDetail.url;
     }
   }
 
@@ -89,7 +128,7 @@ class DetailScreen extends StatelessWidget {
                 )),
             endDrawer: const NavigationDrawerWidget(),
             body: FutureBuilder(
-                future: getRecipe(origen),
+                future: getRecipe(widget.origen, widget.recipeDetail),
                 builder: (context, AsyncSnapshot<Recipe> snapshot) {
                   if (snapshot.hasError) {
                     return ErrorWidget(snapshot.error.toString());
@@ -97,21 +136,30 @@ class DetailScreen extends StatelessWidget {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  recipeDetail = snapshot.data!;
+                  widget.recipeDetail = snapshot.data!;
 
                   return Container(
                     width: double.infinity,
                     height: double.infinity,
                     child: Stack(
                       children: <Widget>[
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Image.network(
-                            recipeDetail.image,
-                            fit: BoxFit.cover,
-                            height: size.height * 0.55,
-                          ),
-                        ),
+                        widget.recipeDetail.image != ""
+                            ? Align(
+                                alignment: Alignment.topCenter,
+                                child: Image.network(
+                                  widget.recipeDetail.image,
+                                  fit: BoxFit.cover,
+                                  height: size.height * 0.55,
+                                ),
+                              )
+                            : Align(
+                                alignment: Alignment.topCenter,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: size.height * 0.55,
+                                  color: Colors.blue,
+                                ),
+                              ),
                         DraggableScrollableSheet(
                           maxChildSize: 1,
                           initialChildSize: 0.6,
@@ -151,40 +199,106 @@ class DetailScreen extends StatelessWidget {
                                     Row(
                                       children: <Widget>[
                                         Text(
-                                          recipeDetail.label,
+                                          widget.recipeDetail.label,
                                           style: const TextStyle(
                                               fontSize: 19,
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         const Spacer(),
-                                        IconButton(
-                                          onPressed: () async {
-                                            recipeDetail.idapi =
-                                                edamamId(recipeDetail.uri);
-                                            recipeDetail.isapi = 1;
-                                            await createRecipe(recipeDetail);
-                                          },
-                                          color: Colors.redAccent,
-                                          icon: const Icon(Icons.save),
-                                          iconSize: 30,
-                                        ),
+                                        widget.origen == 0
+                                            ? IconButton(
+                                                onPressed: () async {
+                                                  widget.recipeDetail.idapi =
+                                                      edamamId(widget
+                                                          .recipeDetail.uri);
+                                                  bool existidapi =
+                                                      await existFirestoreRecipe(
+                                                          widget.recipeDetail
+                                                              .idapi!);
+                                                  String ltitle =
+                                                      "Saving Recipe...";
+                                                  String lcontent = "";
+                                                  if (existidapi) {
+                                                    lcontent =
+                                                        "This recipe was not saved because it already exists in your saved recipes list ";
+                                                  } else {
+                                                    widget.recipeDetail.isapi =
+                                                        1;
+                                                    await createRecipe(
+                                                        widget.recipeDetail);
+                                                    lcontent =
+                                                        " This recipe has been successfully saved";
+                                                  }
+
+                                                  await _showMyDialog(context,
+                                                      ltitle, lcontent);
+                                                  Navigator.pop(context);
+                                                },
+                                                color: Colors.redAccent,
+                                                icon: const Icon(Icons.save),
+                                                iconSize: 30,
+                                              )
+                                            : const Spacer(),
                                         const Spacer(),
                                         //casos origen = firestore API (1) i firestore own(2) mostrar boto delete de firestore
-                                        origen>=1 ? 
-                                        IconButton(
-                                          onPressed: () async {
-                                            await deleteFirestoreRecipe(recipeDetail.id!);
-                                            if(recipeDetail.isapi==0){
-                                              await deleteFirestoreStorage(recipeDetail.image);
-                                            }
-                                            Navigator.pop(context);
+                                        widget.origen >= 1
+                                            ? IconButton(
+                                                onPressed: () async {
+                                                  String ltitle =
+                                                      "Deleting Recipe...";
+                                                  String lcontent =
+                                                      "The recipe has been successfully deleted";
+                                                  await deleteFirestoreRecipe(
+                                                      widget.recipeDetail.id!);
+                                                  if (widget.origen == 2) {
+                                                    await deleteFirestoreStorage(
+                                                        widget.recipeDetail
+                                                            .image);
+                                                  }
+                                                  await _showMyDialog(context,
+                                                      ltitle, lcontent);
+                                                  Navigator.pop(context);
+                                                },
+                                                color: Colors.redAccent,
+                                                icon: const Icon(Icons.delete),
+                                                iconSize: 30,
+                                              )
+                                            : const Text("save"),
 
-                                          },
-                                          color: Colors.redAccent,
-                                          icon: const Icon(Icons.delete),
-                                          iconSize: 30,
-                                        ):const Text("save"),
+                                        const Spacer(),
+                                        //modify icon
+                                        widget.origen >= 1
+                                            ? IconButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context)
+                                                      .push(MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CreateModifyRecipeScreen(
+                                                            precipe: widget
+                                                                .recipeDetail,
+                                                            iscreating: false),
+                                                  ))
+                                                      .then((result) {
+                                                    if (result != null) {
+                                                      setState(() {
+                                                        widget.recipeDetail =
+                                                            result;
+                                                        if (widget.recipeDetail
+                                                                .isapi ==
+                                                            0) {
+                                                          widget.origen = 2;
+                                                        }
+                                                      });
+                                                    }
+                                                  });
+                                                },
+                                                color: Colors.redAccent,
+                                                icon:
+                                                    const Icon(Icons.mode_edit),
+                                                iconSize: 30,
+                                              )
+                                            : const Text(""),
                                       ],
                                     ),
                                     const SizedBox(
@@ -221,7 +335,7 @@ class DetailScreen extends StatelessWidget {
                                             ListView.separated(
                                               physics: const ScrollPhysics(),
                                               shrinkWrap: true,
-                                              itemCount: recipeDetail
+                                              itemCount: widget.recipeDetail
                                                   .cuisineType.length,
                                               separatorBuilder:
                                                   (BuildContext context,
@@ -236,7 +350,7 @@ class DetailScreen extends StatelessWidget {
                                                       int index) {
                                                 return Center(
                                                   child: Text(
-                                                    recipeDetail
+                                                    widget.recipeDetail
                                                         .cuisineType[index],
                                                     style: const TextStyle(
                                                         fontSize: 15,
@@ -262,8 +376,8 @@ class DetailScreen extends StatelessWidget {
                                             ListView.separated(
                                               physics: const ScrollPhysics(),
                                               shrinkWrap: true,
-                                              itemCount:
-                                                  recipeDetail.dishType.length,
+                                              itemCount: widget
+                                                  .recipeDetail.dishType.length,
                                               separatorBuilder:
                                                   (BuildContext context,
                                                       int index) {
@@ -277,7 +391,7 @@ class DetailScreen extends StatelessWidget {
                                                       int index) {
                                                 return Center(
                                                   child: Text(
-                                                    recipeDetail
+                                                    widget.recipeDetail
                                                         .dishType[index],
                                                     style: const TextStyle(
                                                         fontSize: 15,
@@ -301,7 +415,7 @@ class DetailScreen extends StatelessWidget {
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             Text(
-                                              recipeDetail.calories
+                                              widget.recipeDetail.calories
                                                       .toStringAsFixed(0) +
                                                   " kcal",
                                               style: const TextStyle(
@@ -331,7 +445,7 @@ class DetailScreen extends StatelessWidget {
                                         ListView.separated(
                                           physics: const ScrollPhysics(),
                                           shrinkWrap: true,
-                                          itemCount: recipeDetail
+                                          itemCount: widget.recipeDetail
                                               .ingredientLines.length,
                                           separatorBuilder:
                                               (BuildContext context,
@@ -348,7 +462,7 @@ class DetailScreen extends StatelessWidget {
                                                   const EdgeInsets.symmetric(
                                                       vertical: 5.0),
                                               child: Text("· " +
-                                                  recipeDetail
+                                                  widget.recipeDetail
                                                       .ingredientLines[index]),
                                             );
                                           },
@@ -358,8 +472,14 @@ class DetailScreen extends StatelessWidget {
                                     const SizedBox(
                                       height: 20,
                                     ),
-                                //casos origen = API pur (0) i firestore API(1) //ha d'apareixer boto instruc o camp descripcio propia
-                                    origen<=1 
+                                    //casos origen = API pur (0) i firestore API(1) //ha d'apareixer boto instruc o camp descripcio propia
+                                    Center(
+                                        child: Text(
+                                            widget.recipeDetail.description!)),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    widget.origen <= 1
                                         ? Center(
                                             child: ElevatedButton(
                                               onPressed: _launchURL,
@@ -371,9 +491,9 @@ class DetailScreen extends StatelessWidget {
                                               ),
                                             ),
                                           )
-                                        : Center(
-                                            child: Text(
-                                                recipeDetail.description!)),
+                                        : const SizedBox(
+                                            height: 5,
+                                          ),
                                   ],
                                 ),
                               ),

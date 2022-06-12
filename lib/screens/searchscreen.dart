@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:tfg/models/recipe_api.dart';
-//import 'package:tfg/screens/detailscreen.dart';
+import 'package:tfg/models/recipe.dart';
 import 'package:tfg/screens/detailscreenunified.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
+import 'package:tfg/constants/apikeys.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -18,10 +18,10 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   bool isloading = false;
   final user = FirebaseAuth.instance.currentUser!;
-  List<RecipeApi> recipes = [];
+
+  List<Recipe> recipes = [];
   final TextEditingController _textEditingController = TextEditingController();
-  String applicationId = 'b702e461';
-  String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
+  
 
   getRecipes(String query) async {
     //final urldet ="https://api.edamam.com/api/recipes/v2/0ec48df32629a4349a37af0fed9a6835?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1";
@@ -38,9 +38,17 @@ class _SearchScreenState extends State<SearchScreen> {
     recipes.clear();
     Map<String, dynamic> jsonData = jsonDecode(response.body);
     jsonData["hits"].forEach((element) {
-      RecipeApi recipeApi =
-          RecipeApi(label: "label", image: "image", uri: "uri");
-      recipeApi = RecipeApi.fromMap(element["recipe"]);
+      Recipe recipeApi = Recipe(
+          label: "label",
+          image: "image",
+          uri: "uri",
+          url: "url",
+          calories: 0.0,
+          ingredientLines: [],
+          dishType: [],
+          healthLabels: [],
+          cuisineType: []);
+      recipeApi = Recipe.fromMap(element["recipe"]);
       recipes.add(recipeApi);
     });
     //print("${recipes.toString()}");
@@ -202,13 +210,14 @@ class _SearchScreenState extends State<SearchScreen> {
                                               String idRecipe;
                                               idRecipe =
                                                   edamamId(recipes[index].uri);
-
+                                              
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (context) {
                                                     return DetailScreen(
                                                       origen: 0,
-                                                      pidRecipe: idRecipe,
+                                                      pidRecipe: idRecipe, 
+                                                      recipeDetail: recipes[index],
                                                       
                                                     );
                                                   },

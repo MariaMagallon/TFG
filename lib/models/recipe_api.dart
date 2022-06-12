@@ -1,11 +1,11 @@
-class RecipeApi {
+class Recipe {
   late String label;
   late String image;
   late String uri;
 
-  RecipeApi({required this.label, required this.image, required this.uri});
-  factory RecipeApi.fromMap(Map<String, dynamic> parsedJson) {
-    return RecipeApi(
+  Recipe({required this.label, required this.image, required this.uri});
+  factory Recipe.fromMap(Map<String, dynamic> parsedJson) {
+    return Recipe(
       uri: parsedJson["uri"],
       label: parsedJson["label"],
       image: parsedJson["image"],

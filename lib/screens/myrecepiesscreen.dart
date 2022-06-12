@@ -1,20 +1,29 @@
 import 'dart:convert';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:tfg/models/own_recipe.dart';
 import 'package:tfg/models/recipe.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-//import 'package:tfg/models/recipe_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:tfg/screens/createrecipescreen.dart';
 import 'package:tfg/screens/detailscreenunified.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
+import 'package:tfg/constants/apikeys.dart';
 
 final db = FirebaseFirestore.instance;
 
 class MyRecipes extends StatelessWidget {
   final user = FirebaseAuth.instance.currentUser!;
+  Recipe emptyrecipe = Recipe(
+      label: "",
+      image: "",
+      uri: "",
+      url: "",
+      calories: 0.0,
+      ingredientLines: [],
+      dishType: [],
+      healthLabels: [],
+      cuisineType: []);
 
   MyRecipes({Key? key}) : super(key: key);
 
@@ -42,53 +51,56 @@ class MyRecipes extends StatelessWidget {
               iconSize: 30.0,
             )),
         endDrawer: const NavigationDrawerWidget(),
-        body: Center(
-            child: Column(
-          children: <Widget>[
-            const SizedBox(
-              height: 30,
-            ),
-            const Center(
-              child: Text(
-                ('My Recipes'),
-                style: TextStyle(
-                    fontSize: 30,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
+        body: SingleChildScrollView(
+          child: Center(
+              child: Column(
+            children: <Widget>[
+              const SizedBox(
+                height: 30,
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const CreateRecipeScreen(),
-                  ));
-                },
-                child: const Text(
-                  'Create a new recipe',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  onPrimary: Colors.white,
-                  primary: Colors.indigo,
+              const Center(
+                child: Text(
+                  ('My Recipes'),
+                  style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            _RecipesAPI(),
-            _RecipesUser(),
-          ],
-        )));
+              const SizedBox(
+                height: 30,
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CreateModifyRecipeScreen(
+                          precipe: emptyrecipe, iscreating: true),
+                    ));
+                  },
+                  child: const Text(
+                    'Create a new recipe',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.white,
+                    primary: Colors.indigo,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const _RecipesAPI(),
+              _RecipesUser(),
+            ],
+          )),
+        ));
   }
 }
 
 class _RecipesAPI extends StatelessWidget {
-  _RecipesAPI({
+  const _RecipesAPI({
     Key? key,
   }) : super(key: key);
 
@@ -116,13 +128,14 @@ class _RecipesAPI extends StatelessWidget {
                   child: GestureDetector(
                       onTap: () {
                         String idRecipe;
-                        idRecipe = _listrecipesAPI[index].id!;
+                        idRecipe = _listrecipesAPI[index].idapi!;
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) {
                               return DetailScreen(
                                 origen: 1,
                                 pidRecipe: idRecipe,
+                                recipeDetail: _listrecipesAPI[index],
                               );
                             },
                           ),
@@ -130,7 +143,7 @@ class _RecipesAPI extends StatelessWidget {
                       },
                       child: RecipeTile(
                           id: _listrecipesAPI[index].idapi!,
-                          imageurl: _listrecipesAPI[index].image, //TODO: eliminar contenido por no actualizado 
+                          imageurl: _listrecipesAPI[index].image,
                           title: _listrecipesAPI[index].label)));
             }));
       },
@@ -164,8 +177,7 @@ class _RecipeTileState extends State<RecipeTile> {
 //TODO: unificar getRecipeFromAPI amb el case origen 0 de detailscreen a getRecipe
 
   Future<Recipe> getRecipeFromAPI(String idrecipe) async {
-    String applicationId = 'b702e461';
-    String applicationKey = '1bdbca0d4344e3db6103b072c21f38f1';
+    
 
     final url = Uri.parse(
         "https://api.edamam.com/api/recipes/v2/$idrecipe?type=public&app_id=$applicationId&app_key=$applicationKey");
@@ -269,6 +281,7 @@ class _RecipesUser extends StatelessWidget {
                               return DetailScreen(
                                 origen: 2,
                                 pidRecipe: idRecipe,
+                                recipeDetail: _listrecipesUser[index],
                               );
                             },
                           ),
@@ -300,12 +313,18 @@ class _RecipeTileUserState extends State<RecipeTileUser> {
       margin: const EdgeInsets.all(8),
       child: Stack(
         children: <Widget>[
-          Image.network(
-            widget.imageurl,
-            height: 200,
-            width: 200,
-            fit: BoxFit.cover,
-          ),
+          widget.imageurl != ""
+              ? Image.network(
+                  widget.imageurl,
+                  height: 200,
+                  width: 200,
+                  fit: BoxFit.cover,
+                )
+              : Container(
+                  height: 200,
+                  width: 200,
+                  color: Colors.blue,
+                ),
           Container(
             width: 200,
             alignment: Alignment.bottomLeft,

@@ -18,6 +18,7 @@ class Recipe {
   late List<String> dishType = [];
   late List<String> healthLabels = [];
   late List<String> cuisineType = [];
+  
 
   Recipe(
       {required this.label,
@@ -97,28 +98,36 @@ Stream<List<Recipe>> loadRecipes(int isapi) {
       .where('isapi', isEqualTo: isapi)
       .snapshots()
       .map((QuerySnapshot<Map<String, dynamic>> query) {
-    List<Recipe> result = [];
-    for (final docSnap in query.docs) {
-      result.add(Recipe.fromFirestore(docSnap.id, docSnap.data()));
-    }
-    return result;
-  });
+        List<Recipe> result = [];
+        for (final docSnap in query.docs) {
+          result.add(Recipe.fromFirestore(docSnap.id, docSnap.data()));
+        }
+        return result;
+      }
+      );
 }
 
-Stream<Recipe> recipeStream(String idrecipe) {
-  final db = FirebaseFirestore.instance;
-  final recipe = db.doc("/userData/" + user.uid + "/recipes/" + idrecipe);
-  return recipe
-      .snapshots()
-      .map((docSnap) => Recipe.fromFirestore(docSnap.id, docSnap.data()!));
-}
 
-Future<Recipe> getFirestoreRecipe(String idrecipe) async {
+/*Future<Recipe> getFirestoreRecipe(String idrecipe) async {
   final db = FirebaseFirestore.instance;
   final recipe = db.doc("/userData/" + user.uid + "/recipes/" + idrecipe);
 
   final docSnap = await recipe.get();
   return Recipe.fromFirestore(docSnap.id, docSnap.data()!);
+}*/
+
+Future<bool> existFirestoreRecipe(String idapi) async {
+  final db = FirebaseFirestore.instance;
+  final recipe = db
+      .collection("userData")
+      .doc(user.uid)
+      .collection("recipes")
+      .limit(1)
+      .where('idapi', isEqualTo: idapi);
+      
+  final docSnap = await recipe.get();
+  
+  return (docSnap.size == 1);
 }
 
 Future<void> createRecipe(Recipe recipe) async {
@@ -132,36 +141,29 @@ Future<void> createRecipe(Recipe recipe) async {
   recipe.id = docref.id.toString();
 }
 
-Future<void> deleteFirestoreRecipe(String idrecipe, ) async {
+Future<void> deleteFirestoreRecipe(String idrecipe) async {
   final db = FirebaseFirestore.instance;
-  final storageReference = FirebaseStorage.instance.ref();
   db.doc("/userData/" + user.uid + "/recipes/" + idrecipe).delete();
- /* String filePath = imageref.replaceAll(
-      "https://firebasestorage.googleapis.com/v0/b/tfg-database-68ae7.appspot.com/o/",
-      '');
-  filePath = filePath.replaceAll( RegExp(r'%2F'), '/');
-
-  filePath = filePath.replaceAll(RegExp(r'[?alt].*'), '');
-
-  storageReference
-      .child(filePath)
-      .delete()
-      .then((_) => print('Successfully deleted $filePath storage item'));*/
 }
 
 Future<void> deleteFirestoreStorage(String imageref) async {
-  
   final storageReference = FirebaseStorage.instance.ref();
 
   String filePath = imageref.replaceAll(
       "https://firebasestorage.googleapis.com/v0/b/tfg-database-68ae7.appspot.com/o/",
       '');
-  filePath = filePath.replaceAll( RegExp(r'%2F'), '/');
+  filePath = filePath.replaceAll(RegExp(r'%2F'), '/');
 
   filePath = filePath.replaceAll(RegExp(r'[?alt].*'), '');
+ // https://firebasestorage.googleapis.com/v0/b/tfg-database-68ae7.appspot.com/o/recipes%2F1654361160730.jpg?alt=media&token=3b8e2122-746d-420b-8f79-932d028afc0d
 
   storageReference
       .child(filePath)
       .delete()
       .then((_) => print('Successfully deleted $filePath storage item'));
+}
+
+Future<void> updateRecipe(Recipe recipe ) async {
+  final db = FirebaseFirestore.instance;
+  db.doc("/userData/" + user.uid + "/recipes/" + recipe.id!).update(recipe.toFirestore());
 }
