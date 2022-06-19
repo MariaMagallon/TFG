@@ -6,9 +6,9 @@ import 'package:tfg/models/recipe.dart';
 import 'package:tfg/screens/createrecipescreen.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tfg/constants/apikeys.dart';
+import 'package:tfg/globals/apikeys.dart';
 
 final db = FirebaseFirestore.instance;
 
@@ -41,7 +41,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   bool isloading = false;
 
-  final user = FirebaseAuth.instance.currentUser!;
+  
 
   Future<Recipe> getRecipe(int origen, Recipe recipeDetail) async {
     if (origen == 2) {
@@ -224,7 +224,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                                         "This recipe was not saved because it already exists in your saved recipes list ";
                                                   } else {
                                                     widget.recipeDetail.isapi =
-                                                        1;
+                                                        true;
                                                     await createRecipe(
                                                         widget.recipeDetail);
                                                     lcontent =
@@ -286,7 +286,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                                             result;
                                                         if (widget.recipeDetail
                                                                 .isapi ==
-                                                            0) {
+                                                            false) {
                                                           widget.origen = 2;
                                                         }
                                                       });

@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe.dart';
 import 'package:tfg/screens/detailscreenunified.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
-import 'package:tfg/constants/apikeys.dart';
+import 'package:tfg/globals/apikeys.dart';
+import 'package:tfg/globals/globalvariables.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -17,24 +17,16 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   bool isloading = false;
-  final user = FirebaseAuth.instance.currentUser!;
+
+  //final user = FirebaseAuth.instance.currentUser!;
 
   List<Recipe> recipes = [];
   final TextEditingController _textEditingController = TextEditingController();
-  
 
   getRecipes(String query) async {
-    //final urldet ="https://api.edamam.com/api/recipes/v2/0ec48df32629a4349a37af0fed9a6835?type=public&app_id=b702e461&app_key=1bdbca0d4344e3db6103b072c21f38f1";
-    //0ec48df32629a4349a37af0fed9a6835 id
     final url = Uri.parse(
         "https://api.edamam.com/api/recipes/v2?type=public&q=$query&app_id=$applicationId&app_key=$applicationKey");
-    //final url = Uri.parse(cadena);
     var response = await http.get(url);
-    //String cadena = "http://www.edamam.com/ontologies/edamam.owl#recipe_0ec48df32629a4349a37af0fed9a6835";
-    //String subcadena;
-    //subcadena = cadena.replaceAll( "http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
-    //print(subcadena);
-    //print ("${response.body.toString()} this is response");
     recipes.clear();
     Map<String, dynamic> jsonData = jsonDecode(response.body);
     jsonData["hits"].forEach((element) {
@@ -58,6 +50,11 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     isloading = false;
+    recipes.clear();
+   if ((user.displayName)==null){
+      user.displayName!="";
+   }
+    
   }
 
   @override
@@ -75,26 +72,29 @@ class _SearchScreenState extends State<SearchScreen> {
               actions: [
                 Builder(builder: (context) {
                   return IconButton(
-                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
                     icon: const Icon(Icons.account_circle_rounded),
                     iconSize: 30.0,
                   );
                 }),
               ],
-              /*actions: [
-                IconButton(
-                  onPressed: () => FirebaseAuth.instance.signOut(),
-                  icon: const Icon(Icons.account_circle_rounded),
-                  iconSize: 30.0,
-                ),
-              ],*/
-              /*leading: IconButton(
-                onPressed: () => Navigator.of(context).pop(context),
-                icon: const Icon(Icons.arrow_back_sharp),
-                iconSize: 30.0,
-              ),*/
             ),
             endDrawer: const NavigationDrawerWidget(),
+            onEndDrawerChanged: (val) {
+              if (val) {
+                setState(() {
+                  //useremailsearch = user.email!;
+                  //usernamesearch = user.displayName!;
+                });
+              } else {
+                setState(() {
+                  //useremailsearch = user.email!;
+                  //usernamesearch = user.displayName!;
+                });
+              }
+            },
             body: Stack(children: <Widget>[
               Container(
                 height: MediaQuery.of(context).size.height,
@@ -110,7 +110,18 @@ class _SearchScreenState extends State<SearchScreen> {
                         Row(
                           children: <Widget>[
                             Text(
-                              user.email!,
+                              "Welcome "+user.email!,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 30,
+                            ),
+                            Text(
+                              user.displayName!,
                               style: const TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
@@ -173,12 +184,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                 width: 16,
                               ),
                               InkWell(
-                                onTap: () {
+                                onTap: () async {
                                   if (_textEditingController.text.isNotEmpty) {
                                     setState(() {
                                       isloading = true;
                                     });
-                                    getRecipes(_textEditingController.text);
+                                    await getRecipes(
+                                        _textEditingController.text);
                                     setState(() {
                                       isloading = false;
                                     });
@@ -193,7 +205,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         const SizedBox(height: 25),
                         Container(
                           child: isloading
-                              ? const CircularProgressIndicator()
+                              ? const CircularProgressIndicator(
+                                  backgroundColor: Colors.white,
+                                )
                               : GridView(
                                   shrinkWrap: true,
                                   scrollDirection: Axis.vertical,
@@ -210,15 +224,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                               String idRecipe;
                                               idRecipe =
                                                   edamamId(recipes[index].uri);
-                                              
+
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (context) {
                                                     return DetailScreen(
                                                       origen: 0,
-                                                      pidRecipe: idRecipe, 
-                                                      recipeDetail: recipes[index],
-                                                      
+                                                      pidRecipe: idRecipe,
+                                                      recipeDetail:
+                                                          recipes[index],
                                                     );
                                                   },
                                                 ),

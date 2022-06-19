@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
-final user = FirebaseAuth.instance.currentUser!;
+import 'package:tfg/globals/globalvariables.dart';
+//final user = FirebaseAuth.instance.currentUser!;
 
 class Recipe {
   String? id;
-  int? isapi;
+  bool? isapi;
   late String label;
   late String image;
   String? description;
@@ -90,7 +90,7 @@ String edamamId(String uri) {
       "http://www.edamam.com/ontologies/edamam.owl#recipe_", '');
 }
 
-Stream<List<Recipe>> loadRecipes(int isapi) {
+Stream<List<Recipe>> loadRecipes(bool isapi) {
   final db = FirebaseFirestore.instance;
 
   final recipes = db.collection("userData").doc(user.uid).collection("recipes");
@@ -155,7 +155,7 @@ Future<void> deleteFirestoreStorage(String imageref) async {
   filePath = filePath.replaceAll(RegExp(r'%2F'), '/');
 
   filePath = filePath.replaceAll(RegExp(r'[?alt].*'), '');
- // https://firebasestorage.googleapis.com/v0/b/tfg-database-68ae7.appspot.com/o/recipes%2F1654361160730.jpg?alt=media&token=3b8e2122-746d-420b-8f79-932d028afc0d
+ 
 
   storageReference
       .child(filePath)

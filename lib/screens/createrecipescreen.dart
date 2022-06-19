@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
@@ -47,7 +46,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
   late List<String> listcuisine = [];
   late List<String> listdish = [];
 
-  final user = FirebaseAuth.instance.currentUser!;
+  
   Recipe _recipe = Recipe(
       label: "",
       image: "",
@@ -305,18 +304,27 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
     }
   }
 
- Future editField( List list, int index, String title) async {
+ Future <String> editField( List list, int index, String title) async {
  
     final inputfield = await showTextDialog(
       context,
       title: title,
       value: list[index],
+      tipoteclado: TextInputType.text,
+      poscuro:false,
     );
-
-    setState(() {
-      list[index]=inputfield;
-    });
+    if (inputfield==null){
+      return "";
+    }else{
+      setState(() {
+        list[index]=inputfield;
+      });
+      return inputfield;
+    }
+    
+    
   }
+  
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -672,14 +680,15 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                   _recipe.healthLabels = listhealth;
 
                                   if (iscreating == true) {
-                                    _recipe.isapi = 0;
+                                    _recipe.isapi = false;
                                     if (isimagemodified) {
                                       _recipe.image = await _uploadImage();
                                     }
                                     await createRecipe(_recipe);
+                                    Navigator.of(context).pop();
                                   } else {
                                     if (isimagemodified) {
-                                      if (_recipe.isapi == 0) {
+                                      if (_recipe.isapi == false) {
                                         await deleteFirestoreStorage(
                                             _recipe.image);
                                       }
@@ -688,7 +697,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                     }
                                     if (imagePathModified.isNotEmpty) {
                                       _recipe.image = imagePathModified;
-                                      _recipe.isapi = 0;
+                                      _recipe.isapi = false;
                                     }
 
                                     await updateRecipe(_recipe);

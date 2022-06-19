@@ -2,18 +2,18 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tfg/models/recipe.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tfg/screens/createrecipescreen.dart';
 import 'package:tfg/screens/detailscreenunified.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
-import 'package:tfg/constants/apikeys.dart';
+import 'package:tfg/globals/apikeys.dart';
 
 final db = FirebaseFirestore.instance;
 
 class MyRecipes extends StatelessWidget {
-  final user = FirebaseAuth.instance.currentUser!;
+  //final user = FirebaseAuth.instance.currentUser!;
   Recipe emptyrecipe = Recipe(
       label: "",
       image: "",
@@ -107,7 +107,7 @@ class _RecipesAPI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: loadRecipes(1),
+      stream: loadRecipes(true),
       builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error.toString());
@@ -253,7 +253,7 @@ class _RecipesUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: loadRecipes(0),
+      stream: loadRecipes(false),
       builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error.toString());

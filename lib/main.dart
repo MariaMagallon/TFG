@@ -1,7 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tfg/globals/globalvariables.dart';
 import 'package:tfg/widgets/auth_gate.dart';
-// Import the generated file
 import 'firebase_options.dart';
 import 'package:tfg/screens/searchscreen.dart';
 
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    user = FirebaseAuth.instance.currentUser!;
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SearchScreen(),
