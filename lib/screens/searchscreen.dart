@@ -18,7 +18,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   bool isloading = false;
 
-  //final user = FirebaseAuth.instance.currentUser!;
+  
 
   List<Recipe> recipes = [];
   final TextEditingController _textEditingController = TextEditingController();
@@ -43,7 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
       recipeApi = Recipe.fromMap(element["recipe"]);
       recipes.add(recipeApi);
     });
-    //print("${recipes.toString()}");
+    
   }
 
   @override
@@ -85,13 +85,11 @@ class _SearchScreenState extends State<SearchScreen> {
             onEndDrawerChanged: (val) {
               if (val) {
                 setState(() {
-                  //useremailsearch = user.email!;
-                  //usernamesearch = user.displayName!;
+                 
                 });
               } else {
                 setState(() {
-                  //useremailsearch = user.email!;
-                  //usernamesearch = user.displayName!;
+                 
                 });
               }
             },
@@ -120,9 +118,18 @@ class _SearchScreenState extends State<SearchScreen> {
                             const SizedBox(
                               width: 30,
                             ),
+                            ((user.displayName)==null)?
                             Text(
                               user.displayName!,
                               style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ):
+                            const Text(
+                              "User",
+                              style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,

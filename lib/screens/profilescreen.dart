@@ -9,6 +9,7 @@ import 'package:tfg/widgets/editablefield_widget.dart';
 import 'package:tfg/widgets/passwordchange.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
 import 'package:tfg/globals/storagefunctions.dart';
+import 'package:tfg/widgets/showdialog_widget.dart';
 
 final db = FirebaseFirestore.instance;
 FirebaseStorage storageRef = FirebaseStorage.instance;
@@ -309,8 +310,8 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                               oldpassword = await editField(
                                   "Write the current password", oldpassword);
                               if (oldpassword == "") {
-                                _showMessage(
-                                    "The user has not been eliminated because the password was not entered");
+                                await showMyDialog(context, "Deleting your account...", "The user has not been eliminated because the password was not entered");
+                                
                               } else {
                                 try {
                                   UserCredential authResult =
@@ -351,7 +352,7 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                                           "An error has happened.\nError code = " +
                                               e.code;
                                   }
-                                  _showMessage(errorMessage);
+                                  await showMyDialog(context, "Deleting your account...", errorMessage);
                                 }
                               
                             }
@@ -380,8 +381,8 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                               oldpassword = await editField(
                                   "Write the current password", oldpassword);
                               if (oldpassword == "") {
-                                _showMessage(
-                                    "The update of the email has not been carried out because the password was not entered");
+                                await showMyDialog(context, "Changing email...", "The update of the email has not been carried out because the password was not entered");
+                                
                               } else {
                                 try {
                                   UserCredential authResult =
@@ -392,8 +393,8 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                                   );
                                   await authResult.user!
                                       .updateEmail(controlleremail.text);
-                                  _showMessage(
-                                      "The email has been succesfully changed");
+                                  await showMyDialog(context, "Changing email...", "The email has been succesfully changed");
+                                  
                                   mustreload = true;
                                 } on FirebaseAuthException catch (e) {
                                   switch (e.code.toUpperCase()) {
@@ -425,7 +426,8 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                                           "An error has happened.\nError code = " +
                                               e.code;
                                   }
-                                  _showMessage(errorMessage);
+                                  await showMyDialog(context, "Changing email...", errorMessage);
+                                  
                                 }
                               }
                             }
@@ -447,11 +449,12 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                             if (mustreload) {
                               await user.reload();
                               user = FirebaseAuth.instance.currentUser!;
-                              _showMessage(
-                                  "The changes have been succesfully made");
+                              await showMyDialog(context, "Saving changes...", "The changes have been succesfully changed");
+                            
                               Navigator.of(context).pop(true);
                             } else {
-                              _showMessage("No changes have been made");
+                              await showMyDialog(context, "Saving changes...", "No changes have been made");
+                              
                             }
                           },
                           child: const Text(

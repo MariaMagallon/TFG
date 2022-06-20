@@ -183,12 +183,12 @@ class _RecipeTileState extends State<RecipeTile> {
 
     var response = await http.get(url);
 
-    //print(response);
+    
 
     Map<String, dynamic> jsonData = jsonDecode(response.body);
 
     recipeDetail = Recipe.fromMap(jsonData["recipe"]);
-    //print(recipeDetail.label);
+    
 
     return recipeDetail;
   }

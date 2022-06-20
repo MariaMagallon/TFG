@@ -26,9 +26,9 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   Widget build(BuildContext context) {
     
     return Drawer(
-      child: Material(
-        color: const Color.fromRGBO(50, 75, 205, 1),
-        child: ListView(
+      child: Scaffold(
+        backgroundColor: const Color.fromRGBO(50, 75, 205, 1),
+        body: ListView(
           children: <Widget>[
             Container(
               padding: padding,

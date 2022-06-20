@@ -40,6 +40,7 @@ class TextDialogWidget extends StatefulWidget {
 
 class _TextDialogWidgetState extends State<TextDialogWidget> {
   late TextEditingController controller;
+  bool type=true;
 
   
   @override
@@ -53,16 +54,20 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
   Widget build(BuildContext context) => AlertDialog(
         title: Text(widget.title),
         content: 
-        (!oscuro)?
+        Container(
+        child: (!oscuro)?
         Row(
           children: [
-            TextField(
-              obscureText: oscuro,
-              controller: controller,
-              decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+            SizedBox(
+              width: 230,
+              child: TextField(
+                obscureText: oscuro,
+                controller: controller,
+                decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                ),
+                keyboardType: textoTipo,
               ),
-              keyboardType: textoTipo,
             ),
 
           ],
@@ -72,7 +77,7 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
                     width: 200,
                     child: TextField(
                       controller: controller,
-                      obscureText: oscuro,
+                      obscureText: type,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                       ),
@@ -81,7 +86,7 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
                   IconButton(
                     onPressed: () {
                       setState(() {
-                        oscuro=!oscuro;
+                        type=!type;
                       });
                     },
                     icon: const Icon(Icons.remove_red_eye),
@@ -89,12 +94,13 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
                   )
                 ],
               ),
-        
+        ),
         actions: [
           ElevatedButton(
             child: const Text('Done'),
             onPressed: () => Navigator.of(context).pop(controller.text),
           )
         ],
+        
       );
 }
