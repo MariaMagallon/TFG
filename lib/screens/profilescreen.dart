@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tfg/globals/globalvariables.dart';
 import 'package:tfg/widgets/editablefield_widget.dart';
 import 'package:tfg/widgets/passwordchange.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
+import 'package:tfg/globals/storagefunctions.dart';
 
 final db = FirebaseFirestore.instance;
 FirebaseStorage storageRef = FirebaseStorage.instance;
@@ -27,6 +27,9 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
   bool _isloading = false;
   late TextEditingController controllerdisplayname;
   late TextEditingController controlleremail;
+  String oldPath="";
+  String newPath="";
+
 
   @override
   void initState() {
@@ -39,6 +42,12 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
     if (user.email != null) {
       controlleremail.text = user.email!;
     }
+    if (user.photoURL !=null){
+      oldPath=user.photoURL!;
+    }else{
+      oldPath="";
+    }
+    newPath=oldPath;
   }
 
   Future<bool> imagePicker() async {
@@ -48,11 +57,12 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
       setState(() {
         imagePath = image;
         imageName = image.name.toString();
-        //descriptionController.text = Faker().lorem.sentence();
+        
       });
       return true;
     } else {
       return false;
+      
     }
   }
 
@@ -94,14 +104,13 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
     ));
   }
 
-  Future  changePassword() async {
-   await showTextDialogPassword(
+  Future changePassword() async {
+    await showTextDialogPassword(
       context,
     );
-    
   }
 
-  Future<String> editField(String title,  String value) async {
+  Future<String> editField(String title, String value) async {
     String? inputfield = await showTextDialog(
       context,
       title: title,
@@ -109,14 +118,66 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
       tipoteclado: TextInputType.text,
       poscuro: true,
     );
-    if (inputfield==null){
+    if (inputfield == null) {
       return "";
-    }else{
-    return inputfield;
+    } else {
+      return inputfield;
     }
   }
-
   
+  widgetShowImage() {
+    if (imagePath != null) {
+      print('showing image from local file');
+      return Stack(
+        children: <Widget>[
+          CircleAvatar(
+            radius: 100,
+            child: ClipOval(
+              child: SizedBox(
+                  width: 180.0,
+                  height: 180.0,
+                  child: Image.file(
+                    File(imagePath!.path),
+                    fit: BoxFit.fill,
+                  )),
+            ),
+          ),
+        ],
+      );
+    } else if ((user.photoURL)!=null) {
+      return Stack(
+        children: <Widget>[
+          CircleAvatar(
+            radius: 100,
+            child: ClipOval(
+              child: SizedBox(
+                  width: 180.0,
+                  height: 180.0,
+                  child: Image.network(
+                    user.photoURL!,
+                    fit: BoxFit.fill,
+                  )),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return const CircleAvatar(
+        radius: 100,
+        child: ClipOval(
+          child: SizedBox(
+            width: 180.0,
+            height: 180.0,
+            child: Icon(
+              Icons.account_circle_rounded,
+              size: 180.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,24 +228,7 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            CircleAvatar(
-                              radius: 100,
-                              child: ClipOval(
-                                child: SizedBox(
-                                    width: 180.0,
-                                    height: 180.0,
-                                    child: (imagePath != null)
-                                        ? Image.file(
-                                            File(imagePath!.path),
-                                            fit: BoxFit.fill,
-                                          )
-                                        : const Icon(
-                                            Icons.account_circle_rounded,
-                                            size: 180.0,
-                                            color: Colors.white,
-                                          )),
-                              ),
-                            ),
+                            widgetShowImage(),
                             Transform.translate(
                               offset: const Offset(-50, 50),
                               child: Container(
@@ -198,8 +242,11 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                                     Icons.camera_alt_rounded,
                                     size: 40.0,
                                   ),
-                                  onPressed: () {
-                                    imagePicker();
+                                  onPressed: () async {
+                                    if (await imagePicker()){
+                                      newPath=imagePath!.path;
+                                    }
+
                                   },
                                 ),
                               ),
@@ -250,72 +297,162 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
                             ),
                           ),
                         ),
+                         const SizedBox(height: 10),
+                        Center(
+                          child: ElevatedButton(
+                            
+                            onPressed: () async {
+                            String oldpassword = "";
+                            String errorMessage = "";
+                            
+                            
+                              oldpassword = await editField(
+                                  "Write the current password", oldpassword);
+                              if (oldpassword == "") {
+                                _showMessage(
+                                    "The user has not been eliminated because the password was not entered");
+                              } else {
+                                try {
+                                  UserCredential authResult =
+                                      await user.reauthenticateWithCredential(
+                                    EmailAuthProvider.credential(
+                                        email: user.email!,
+                                        password: oldpassword),
+                                  );
+                                  await authResult.user!.delete();
+                                  
+                                } on FirebaseAuthException catch (e) {
+                                  switch (e.code.toUpperCase()) {
+                                    case "INVALID-EMAIL":
+                                      errorMessage =
+                                          "Your email address appears to be malformed.";
+                                      break;
+                                    case "WRONG-PASSWORD":
+                                      errorMessage = "Your password is wrong.";
+                                      break;
+                                    case "USER-NOT-FOUND":
+                                      errorMessage =
+                                          "User with this email doesn't exist.";
+                                      break;
+                                    case "USER-DISABLED":
+                                      errorMessage =
+                                          "User with this email has been disabled.";
+                                      break;
+                                    case "TOO-MANY-REQUESTS":
+                                      errorMessage =
+                                          "Too many requests. Try again later.";
+                                      break;
+                                    case "OPERATION-NOT-ALLOWED":
+                                      errorMessage =
+                                          "Signing in with Email and Password is not enabled.";
+                                      break;
+                                    default:
+                                      errorMessage =
+                                          "An error has happened.\nError code = " +
+                                              e.code;
+                                  }
+                                  _showMessage(errorMessage);
+                                }
+                              
+                            }
+                           
+                            },
+                            child: const Text(
+                              ("Delete User"),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              onPrimary: Colors.white,
+                              primary: Colors.indigo,
+                            ),
+                          
+                          ),
+                        ),
                         const SizedBox(height: 10),
                         Center(
                             child: ElevatedButton(
                           onPressed: () async {
                             String oldpassword = "";
-                            String errorMessage="";
-                            bool mustreload=false;
+                            String errorMessage = "";
+                            bool mustreload = false;
                             if ((user.email!) != controlleremail.text) {
                               oldpassword = await editField(
                                   "Write the current password", oldpassword);
-                              if(oldpassword==""){
-                                _showMessage("The update of the email has not been carried out because the password was not entered");
-                              }else{
-                              try {
-                                UserCredential authResult =
-                                    await user.reauthenticateWithCredential(
-                                  EmailAuthProvider.credential(
-                                      email: user.email!,
-                                      password: oldpassword),
-                                );
-                                await authResult.user!
-                                    .updateEmail(controlleremail.text);
-                                  _showMessage("The email has been succesfully changed");
-                                mustreload=true;
-                              } on FirebaseAuthException catch (e) {
-                                switch (e.code.toUpperCase()) {
-                                  case "INVALID-EMAIL":
-                                    errorMessage = "Your email address appears to be malformed.";
-                                    break;
-                                  case "WRONG-PASSWORD":
-                                    errorMessage = "Your password is wrong.";
-                                    break;
-                                  case "USER-NOT-FOUND":
-                                    errorMessage ="User with this email doesn't exist.";
-                                    break;
-                                  case "USER-DISABLED":
-                                    errorMessage ="User with this email has been disabled.";
-                                    break;
-                                  case "TOO-MANY-REQUESTS":
-                                    errorMessage ="Too many requests. Try again later.";
-                                    break;
-                                  case "OPERATION-NOT-ALLOWED":
-                                    errorMessage = "Signing in with Email and Password is not enabled.";
-                                    break;
-                                  default:
-                                    errorMessage ="An error has happened.\nError code = "+e.code;
-                                }
-                                _showMessage(errorMessage);
+                              if (oldpassword == "") {
+                                _showMessage(
+                                    "The update of the email has not been carried out because the password was not entered");
+                              } else {
+                                try {
+                                  UserCredential authResult =
+                                      await user.reauthenticateWithCredential(
+                                    EmailAuthProvider.credential(
+                                        email: user.email!,
+                                        password: oldpassword),
+                                  );
+                                  await authResult.user!
+                                      .updateEmail(controlleremail.text);
+                                  _showMessage(
+                                      "The email has been succesfully changed");
+                                  mustreload = true;
+                                } on FirebaseAuthException catch (e) {
+                                  switch (e.code.toUpperCase()) {
+                                    case "INVALID-EMAIL":
+                                      errorMessage =
+                                          "Your email address appears to be malformed.";
+                                      break;
+                                    case "WRONG-PASSWORD":
+                                      errorMessage = "Your password is wrong.";
+                                      break;
+                                    case "USER-NOT-FOUND":
+                                      errorMessage =
+                                          "User with this email doesn't exist.";
+                                      break;
+                                    case "USER-DISABLED":
+                                      errorMessage =
+                                          "User with this email has been disabled.";
+                                      break;
+                                    case "TOO-MANY-REQUESTS":
+                                      errorMessage =
+                                          "Too many requests. Try again later.";
+                                      break;
+                                    case "OPERATION-NOT-ALLOWED":
+                                      errorMessage =
+                                          "Signing in with Email and Password is not enabled.";
+                                      break;
+                                    default:
+                                      errorMessage =
+                                          "An error has happened.\nError code = " +
+                                              e.code;
+                                  }
+                                  _showMessage(errorMessage);
                                 }
                               }
                             }
-                            if ((user.displayName!)!=controllerdisplayname.text){
-                              await user.updateDisplayName(controllerdisplayname.text);
-                              mustreload=true;
+                            if ((user.displayName!) !=
+                                controllerdisplayname.text) {
+                              await user.updateDisplayName(
+                                  controllerdisplayname.text);
+                              mustreload = true;
                             }
-                            if(mustreload){
+                            if (oldPath!=newPath) {
+                             if (oldPath!=""){
+                                  await deleteFirestoreStorage(oldPath);
+                              }
+                              oldPath=await _uploadImage();
+                              newPath=oldPath;
+                              await user.updatePhotoURL(newPath);
+                              mustreload = true;
+                            }
+                            if (mustreload) {
                               await user.reload();
                               user = FirebaseAuth.instance.currentUser!;
-                              _showMessage("The changes have been succesfully made");
+                              _showMessage(
+                                  "The changes have been succesfully made");
                               Navigator.of(context).pop(true);
-                            }else{
+                            } else {
                               _showMessage("No changes have been made");
                             }
-                            
-
-                            
                           },
                           child: const Text(
                             ("Save"),

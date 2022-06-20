@@ -52,14 +52,44 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
   @override
   Widget build(BuildContext context) => AlertDialog(
         title: Text(widget.title),
-        content: TextField(
-          obscureText: oscuro,
-          controller: controller,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-          ),
-          keyboardType: textoTipo,
-        ),
+        content: 
+        (!oscuro)?
+        Row(
+          children: [
+            TextField(
+              obscureText: oscuro,
+              controller: controller,
+              decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              ),
+              keyboardType: textoTipo,
+            ),
+
+          ],
+        ):Row(
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: TextField(
+                      controller: controller,
+                      obscureText: oscuro,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        oscuro=!oscuro;
+                      });
+                    },
+                    icon: const Icon(Icons.remove_red_eye),
+                    iconSize: 20.0,
+                  )
+                ],
+              ),
+        
         actions: [
           ElevatedButton(
             child: const Text('Done'),

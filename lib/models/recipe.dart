@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tfg/globals/globalvariables.dart';
-//final user = FirebaseAuth.instance.currentUser!;
 
 class Recipe {
   String? id;
@@ -108,14 +105,6 @@ Stream<List<Recipe>> loadRecipes(bool isapi) {
 }
 
 
-/*Future<Recipe> getFirestoreRecipe(String idrecipe) async {
-  final db = FirebaseFirestore.instance;
-  final recipe = db.doc("/userData/" + user.uid + "/recipes/" + idrecipe);
-
-  final docSnap = await recipe.get();
-  return Recipe.fromFirestore(docSnap.id, docSnap.data()!);
-}*/
-
 Future<bool> existFirestoreRecipe(String idapi) async {
   final db = FirebaseFirestore.instance;
   final recipe = db
@@ -144,23 +133,6 @@ Future<void> createRecipe(Recipe recipe) async {
 Future<void> deleteFirestoreRecipe(String idrecipe) async {
   final db = FirebaseFirestore.instance;
   db.doc("/userData/" + user.uid + "/recipes/" + idrecipe).delete();
-}
-
-Future<void> deleteFirestoreStorage(String imageref) async {
-  final storageReference = FirebaseStorage.instance.ref();
-
-  String filePath = imageref.replaceAll(
-      "https://firebasestorage.googleapis.com/v0/b/tfg-database-68ae7.appspot.com/o/",
-      '');
-  filePath = filePath.replaceAll(RegExp(r'%2F'), '/');
-
-  filePath = filePath.replaceAll(RegExp(r'[?alt].*'), '');
- 
-
-  storageReference
-      .child(filePath)
-      .delete()
-      .then((_) => print('Successfully deleted $filePath storage item'));
 }
 
 Future<void> updateRecipe(Recipe recipe ) async {

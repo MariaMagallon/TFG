@@ -2,10 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tfg/globals/storagefunctions.dart';
 import 'package:tfg/models/recipe.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tfg/widgets/editablefield_widget.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
+import 'package:tfg/widgets/showdialog_widget.dart';
 
 final db = FirebaseFirestore.instance;
 FirebaseStorage storageRef = FirebaseStorage.instance;
@@ -61,7 +63,6 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
   String imageName = "";
   XFile? imagePath;
   final ImagePicker _picker = ImagePicker();
-  //var descriptionController = new TextEditingController();
   bool _isloading = false;
   bool iscreating = false;
   String textbotonsave = "";
@@ -124,7 +125,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
       setState(() {
         imagePath = image;
         imageName = image.name.toString();
-        //descriptionController.text = Faker().lorem.sentence();
+       
       });
       return true;
     } else {
@@ -273,7 +274,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
     }
   }
 
-  WidgetShowImage() {
+  widgetShowImage() {
     if (imagePath != null) {
       print('showing image from local file');
 
@@ -371,7 +372,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                               )),
                           const SizedBox(height: 30),
 
-                          WidgetShowImage(),
+                          widgetShowImage(),
                           Padding(
                             padding:
                                 const EdgeInsets.only(left: 40.0, right: 40.0),
@@ -657,14 +658,12 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                             child: ElevatedButton(
                               onPressed: () async {
                                 if (controllerlabel.text.isEmpty) {
-                                  _showMessage(
-                                      "Recipe title is a required field");
+                                  await showMyDialog(context, "Changing Recipe title...", "Recipe title is a required field");
                                   icansave = false;
                                 }
 
                                 if (!isNumeric(controllercalories.text)) {
-                                  _showMessage(
-                                      "Calories must be a numeric value");
+                                  await showMyDialog(context, "Changing Recipe Calories...", "Calories must be a numeric value");
                                   icansave = false;
                                 }
 

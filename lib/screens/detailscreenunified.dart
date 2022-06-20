@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe.dart';
 import 'package:tfg/screens/createrecipescreen.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
+import 'package:tfg/widgets/showdialog_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:tfg/globals/storagefunctions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tfg/globals/apikeys.dart';
 
@@ -65,33 +67,7 @@ class _DetailScreenState extends State<DetailScreen> {
     }
   }
 
-  Future<void> _showMyDialog(
-      BuildContext context, String ptitle, String pcontent) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(ptitle),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(pcontent),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  
 
   void _launchURL() async {
     if (!await launch(widget.recipeDetail.url)) {
@@ -231,7 +207,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                                         " This recipe has been successfully saved";
                                                   }
 
-                                                  await _showMyDialog(context,
+                                                  await showMyDialog(context,
                                                       ltitle, lcontent);
                                                   Navigator.pop(context);
                                                 },
@@ -256,7 +232,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                                         widget.recipeDetail
                                                             .image);
                                                   }
-                                                  await _showMyDialog(context,
+                                                  await showMyDialog(context,
                                                       ltitle, lcontent);
                                                   Navigator.pop(context);
                                                 },

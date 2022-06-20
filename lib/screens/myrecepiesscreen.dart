@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tfg/models/recipe.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tfg/screens/createrecipescreen.dart';
@@ -13,7 +12,7 @@ import 'package:tfg/globals/apikeys.dart';
 final db = FirebaseFirestore.instance;
 
 class MyRecipes extends StatelessWidget {
-  //final user = FirebaseAuth.instance.currentUser!;
+
   Recipe emptyrecipe = Recipe(
       label: "",
       image: "",

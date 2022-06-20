@@ -28,6 +28,8 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
   late TextEditingController controllerNewpass;
   late TextEditingController controllerConfpass;
   bool oscuroOld=true;
+  bool oscuroNew=true;
+  bool oscuroConf=true;
   
 
   
@@ -77,22 +79,60 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
                 ],
               ),
               const SizedBox(height: 20),
-              TextField(
-                controller: controllerNewpass,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: "New Password",
-                  border: OutlineInputBorder(),
-                ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: TextField(
+                      controller: controllerOldpass,
+                      obscureText: oscuroOld,
+                      
+                      decoration: const InputDecoration(
+                      
+                        labelText: "New Password",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        oscuroNew=!oscuroNew;
+                      });
+                    },
+                    icon: const Icon(Icons.remove_red_eye),
+                    iconSize: 20.0,
+                  )
+                ],
               ),
               const SizedBox(height: 20),
-              TextField(
-                controller: controllerConfpass,
-                obscureText: true,              
-                decoration: const InputDecoration(
-                  labelText: "Confirm Password",
-                  border: OutlineInputBorder(),
-                ),
+             Row(
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: TextField(
+                      controller: controllerOldpass,
+                      obscureText: oscuroOld,
+                      
+                      decoration: const InputDecoration(
+                      
+                        labelText: "Confirm Password",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        oscuroConf=!oscuroConf;
+                      });
+                    },
+                    icon: const Icon(Icons.remove_red_eye),
+                    iconSize: 20.0,
+                  )
+                ],
               ),
             ],
           ),

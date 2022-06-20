@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tfg/globals/globalvariables.dart';
-
 import 'package:tfg/screens/myrecepiesscreen.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/screens/profilescreen.dart';
 
 class NavigationDrawerWidget extends StatefulWidget {
-  //final DrawerCallback callback;
-  const NavigationDrawerWidget({Key? key, }) : super(key: key);
+  
+  const NavigationDrawerWidget({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<NavigationDrawerWidget> createState() => _NavigationDrawerWidgetState();
@@ -16,21 +16,15 @@ class NavigationDrawerWidget extends StatefulWidget {
 
 class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   final padding = const EdgeInsets.symmetric(horizontal: 20);
-  
-  String urlImage = "";
+
   @override
   void initState() {
     super.initState();
-    
-   
-    urlImage =
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80';
   }
 
-  
   @override
   Widget build(BuildContext context) {
-    //final user = FirebaseAuth.instance.currentUser!;
+    
     return Drawer(
       child: Material(
         color: const Color.fromRGBO(50, 75, 205, 1),
@@ -43,8 +37,15 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      CircleAvatar(
-                          radius: 30, backgroundImage: NetworkImage(urlImage)),
+                      ((user.photoURL) != null)
+                          ? CircleAvatar(
+                              radius: 30,
+                              backgroundImage: NetworkImage(user.photoURL!))
+                          : const Icon(
+                              Icons.account_circle_rounded,
+                              size: 50.0,
+                              color: Colors.white,
+                            ),
                       const SizedBox(width: 20),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +114,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   }
 
   void selectedItem(BuildContext context, int index) {
-    //Navigator.of(context).pop();
+   
 
     switch (index) {
       case 0:
@@ -126,7 +127,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
             setState(() {});
           }
         });
-        
+
         break;
       case 2:
         Navigator.of(context).push(MaterialPageRoute(
@@ -135,7 +136,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
         break;
       case 3:
         FirebaseAuth.instance.signOut();
-        //FirebaseAuth.instance.currentUser!.delete();
+       
         break;
     }
   }
