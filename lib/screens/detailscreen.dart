@@ -1,16 +1,15 @@
 import 'dart:convert';
 import 'dart:core';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:tfg/models/recipe.dart';
-import 'package:tfg/screens/createmodifyrecipescreen.dart';
-import 'package:tfg/widgets/navigation_drawer_widget.dart';
-import 'package:tfg/widgets/showdialog_widget.dart';
+import 'package:cookmind/models/recipe.dart';
+import 'package:cookmind/screens/createmodifyrecipescreen.dart';
+import 'package:cookmind/widgets/navigation_drawer_widget.dart';
+import 'package:cookmind/widgets/showdialog_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:tfg/globals/storagefunctions.dart';
+import 'package:cookmind/globals/storagefunctions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tfg/globals/apikeys.dart';
+import 'package:cookmind/globals/apikeys.dart';
 
 final db = FirebaseFirestore.instance;
 

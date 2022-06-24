@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tfg/globals/globalvariables.dart';
+import 'package:cookmind/globals/globalvariables.dart';
 
 class Recipe {
   String? id;

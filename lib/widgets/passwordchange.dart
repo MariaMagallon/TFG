@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tfg/globals/globalvariables.dart';
-import 'package:tfg/widgets/showdialog_widget.dart';
+import 'package:cookmind/globals/globalvariables.dart';
+import 'package:cookmind/widgets/showdialog_widget.dart';
 Future<T?> showTextDialogPassword<T>(
   BuildContext context) =>
     showDialog<T>(

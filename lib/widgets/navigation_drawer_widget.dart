@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tfg/globals/globalvariables.dart';
-import 'package:tfg/screens/myrecepiesscreen.dart';
+import 'package:cookmind/globals/globalvariables.dart';
+import 'package:cookmind/screens/myrecepiesscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tfg/screens/profilescreen.dart';
+import 'package:cookmind/screens/profilescreen.dart';
 
 class NavigationDrawerWidget extends StatefulWidget {
   

@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:tfg/globals/globalvariables.dart';
-import 'package:tfg/widgets/auth_gate.dart';
+import 'package:cookmind/globals/globalvariables.dart';
+import 'package:cookmind/widgets/auth_gate.dart';
 import 'firebase_options.dart';
-import 'package:tfg/screens/searchscreen.dart';
+import 'package:cookmind/screens/searchscreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

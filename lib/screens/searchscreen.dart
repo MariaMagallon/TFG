@@ -4,11 +4,11 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:tfg/models/recipe.dart';
-import 'package:tfg/screens/detailscreen.dart';
-import 'package:tfg/widgets/navigation_drawer_widget.dart';
-import 'package:tfg/globals/apikeys.dart';
-import 'package:tfg/globals/globalvariables.dart';
+import 'package:cookmind/models/recipe.dart';
+import 'package:cookmind/screens/detailscreen.dart';
+import 'package:cookmind/widgets/navigation_drawer_widget.dart';
+import 'package:cookmind/globals/apikeys.dart';
+import 'package:cookmind/globals/globalvariables.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);

@@ -4,12 +4,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tfg/globals/globalvariables.dart';
-import 'package:tfg/widgets/editablefield_widget.dart';
-import 'package:tfg/widgets/passwordchange.dart';
-import 'package:tfg/widgets/navigation_drawer_widget.dart';
-import 'package:tfg/globals/storagefunctions.dart';
-import 'package:tfg/widgets/showdialog_widget.dart';
+import 'package:cookmind/globals/globalvariables.dart';
+import 'package:cookmind/widgets/editablefield_widget.dart';
+import 'package:cookmind/widgets/passwordchange.dart';
+import 'package:cookmind/widgets/navigation_drawer_widget.dart';
+import 'package:cookmind/globals/storagefunctions.dart';
+import 'package:cookmind/widgets/showdialog_widget.dart';
 
 final db = FirebaseFirestore.instance;
 FirebaseStorage storageRef = FirebaseStorage.instance;
