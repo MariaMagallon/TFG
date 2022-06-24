@@ -1,9 +1,11 @@
+// ignore_for_file: unnecessary_const
+
 import 'dart:convert';
 import 'dart:core';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:tfg/models/recipe.dart';
-import 'package:tfg/screens/detailscreenunified.dart';
+import 'package:tfg/screens/detailscreen.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
 import 'package:tfg/globals/apikeys.dart';
 import 'package:tfg/globals/globalvariables.dart';
@@ -17,8 +19,6 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   bool isloading = false;
-
-  
 
   List<Recipe> recipes = [];
   final TextEditingController _textEditingController = TextEditingController();
@@ -43,7 +43,6 @@ class _SearchScreenState extends State<SearchScreen> {
       recipeApi = Recipe.fromMap(element["recipe"]);
       recipes.add(recipeApi);
     });
-    
   }
 
   @override
@@ -51,10 +50,9 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     isloading = false;
     recipes.clear();
-   if ((user.displayName)==null){
-      user.displayName!="";
-   }
-    
+    if ((user.displayName) == null) {
+      user.displayName != "";
+    }
   }
 
   @override
@@ -66,9 +64,17 @@ class _SearchScreenState extends State<SearchScreen> {
         },
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('AppName'),
               flexibleSpace: Container(
-                  decoration: const BoxDecoration(color: Colors.indigo)),
+                  decoration: const BoxDecoration(color: Colors.teal)),
+              title: const Text(
+                'AppName',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontFamily: 'Heebo',
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               actions: [
                 Builder(builder: (context) {
                   return IconButton(
@@ -76,7 +82,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       Scaffold.of(context).openEndDrawer();
                     },
                     icon: const Icon(Icons.account_circle_rounded),
-                    iconSize: 30.0,
+                    iconSize: 40.0,
+                    color: Colors.white,
                   );
                 }),
               ],
@@ -84,20 +91,16 @@ class _SearchScreenState extends State<SearchScreen> {
             endDrawer: const NavigationDrawerWidget(),
             onEndDrawerChanged: (val) {
               if (val) {
-                setState(() {
-                 
-                });
+                setState(() {});
               } else {
-                setState(() {
-                 
-                });
+                setState(() {});
               }
             },
             body: Stack(children: <Widget>[
               Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(color: Colors.indigo),
+                decoration: const BoxDecoration(color: Colors.white),
               ),
               SingleChildScrollView(
                 child: Container(
@@ -107,46 +110,57 @@ class _SearchScreenState extends State<SearchScreen> {
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Text(
-                              "Welcome "+user.email!,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 30,
-                            ),
-                            ((user.displayName)==null)?
-                            Text(
-                              user.displayName!,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ):
                             const Text(
-                              "User",
+                              "Welcome ",
                               style: TextStyle(
+                                fontSize: 35,
+                                fontFamily: 'Heebo',
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            ((user.displayName) != null)
+                                ? Text(
+                                    user.displayName!,
+                                    style: const TextStyle(
+                                      fontSize: 35,
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : const Text(
+                                    "User",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              user.email!,
+                              style: const TextStyle(
                                 fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Heebo',
+                                color: Colors.blueGrey,
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(
-                          height: 30,
+                          height: 20,
                         ),
                         Row(
                           children: const <Widget>[
                             Text(
                               "What do want to cook today?",
                               style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
+                                fontSize: 25,
+                                fontFamily: 'Heebo',
+                                color: Colors.teal,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -162,7 +176,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 "Enter ingredients you have and we will show the best recipies for you",
                                 style: TextStyle(
                                   fontSize: 15,
-                                  color: Colors.white,
+                                  fontFamily: 'Heebo',
+                                  color: Colors.black,
                                 ),
                               ),
                             )
@@ -171,7 +186,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         const SizedBox(
                           height: 30,
                         ),
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: Row(
                             children: <Widget>[
@@ -179,13 +194,19 @@ class _SearchScreenState extends State<SearchScreen> {
                                 child: TextField(
                                     controller: _textEditingController,
                                     decoration: const InputDecoration(
+                                        border: const OutlineInputBorder(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10.0)),
+                                          borderSide: const BorderSide(
+                                              color: Colors.grey, width: 0.0),
+                                        ),
                                         hintText: "Enter Ingridients",
                                         hintStyle: TextStyle(
                                           fontSize: 18,
-                                          color: Colors.white,
+                                          color: Colors.black,
                                         )),
                                     style: const TextStyle(
-                                        fontSize: 18, color: Colors.white)),
+                                        fontSize: 18, color: Colors.teal)),
                               ),
                               const SizedBox(
                                 width: 16,
@@ -204,7 +225,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   }
                                 },
                                 child: const Icon(Icons.search,
-                                    color: Colors.white, size: 50.0),
+                                    color: Colors.teal, size: 50.0),
                               )
                             ],
                           ),
@@ -213,16 +234,15 @@ class _SearchScreenState extends State<SearchScreen> {
                         Container(
                           child: isloading
                               ? const CircularProgressIndicator(
-                                  backgroundColor: Colors.white,
+                                  color: Colors.teal,
                                 )
-                              : GridView(
+                              : GridView.count(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
                                   shrinkWrap: true,
                                   scrollDirection: Axis.vertical,
                                   physics: const ClampingScrollPhysics(),
-                                  gridDelegate:
-                                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent: 200,
-                                          mainAxisSpacing: 10.0),
                                   children:
                                       List.generate(recipes.length, (index) {
                                     return GridTile(
@@ -268,7 +288,7 @@ class RecipeTile extends StatefulWidget {
   _RecipeTileState createState() => _RecipeTileState();
 }
 
-class _RecipeTileState extends State<RecipeTile> {
+/*class _RecipeTileState extends State<RecipeTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -283,8 +303,16 @@ class _RecipeTileState extends State<RecipeTile> {
           ),
           Container(
             width: 200,
-            alignment: Alignment.bottomLeft,
-            decoration: BoxDecoration(color: Colors.white.withOpacity(0.5)),
+            height: 200,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.5),
+              border: Border.all(
+                color: Colors.teal, //                   <--- border color
+                width: 2.0,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(3.0)),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -305,4 +333,76 @@ class _RecipeTileState extends State<RecipeTile> {
       ),
     );
   }
+}*/
+class _RecipeTileState extends State<RecipeTile> {
+  @override
+  Widget build(BuildContext context) {
+    return 
+          (widget.imageurl != "")?
+          Card(
+            color: Colors.transparent,
+            elevation: 0,
+            
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: NetworkImage(widget.imageurl),
+                  fit: BoxFit.cover
+            ),
+                
+              ),
+              child: Transform.translate(
+                offset: const Offset(0, 50),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 50),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white.withOpacity(0.5)
+                  ),
+                  child: Text(
+                    widget.title.toUpperCase(), 
+                    style: const TextStyle( 
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontFamily: "Heebo",
+                      overflow: TextOverflow.clip,
+                      fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+          ):Card(
+            color: Colors.transparent,
+            elevation: 0,
+            
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.teal,
+                
+              ),
+              child: Transform.translate(
+                offset: const Offset(0, 50),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 50),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white.withOpacity(0.5)
+                  ),
+                  child: Text(
+                    widget.title.toUpperCase(), 
+                    style: const TextStyle( 
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontFamily: "Heebo",
+                      overflow: TextOverflow.clip,
+                      fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+          );
+  }
 }
+

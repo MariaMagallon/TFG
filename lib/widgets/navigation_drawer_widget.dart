@@ -27,7 +27,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     
     return Drawer(
       child: Scaffold(
-        backgroundColor: const Color.fromRGBO(50, 75, 205, 1),
+        backgroundColor: Colors.teal,
         body: ListView(
           children: <Widget>[
             Container(
@@ -39,7 +39,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                     children: [
                       ((user.photoURL) != null)
                           ? CircleAvatar(
-                              radius: 30,
+                              radius: 40,
                               backgroundImage: NetworkImage(user.photoURL!))
                           : const Icon(
                               Icons.account_circle_rounded,
@@ -52,17 +52,18 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                         children: [
                           Text(
                             user.displayName!,
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                            style: const TextStyle(fontSize: 30, color: Colors.white, fontFamily: 'Heebo'),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             user.email!,
-                            style: TextStyle(fontSize: 14, color: Colors.white),
+                            style: const TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'Heebo'),
                           ),
                         ],
                       ),
                     ],
                   ),
+                  const SizedBox(height: 40,),
                   buildMenuItem(
                     text: 'Profile',
                     icon: Icons.people,
@@ -106,8 +107,8 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     const hoverColor = Colors.white70;
 
     return ListTile(
-      leading: Icon(icon, color: color),
-      title: Text(text, style: const TextStyle(color: color)),
+      leading: Icon(icon, color: color, size: 30.0),
+      title: Text(text, style: const TextStyle(color: color, fontFamily: "Heebo", fontSize: 25)),
       hoverColor: hoverColor,
       onTap: onClicked,
     );

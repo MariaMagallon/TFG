@@ -73,6 +73,16 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+  - family: Steamed
+    fonts:
+      - asset: fonts/steamed.otf
+  - family: Heebo
+    fonts:
+      - asset: fonts/Heebo-Regular.ttf
+      - asset: fonts/Heebo-Bold.ttf
+        weight: 700
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

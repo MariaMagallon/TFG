@@ -52,7 +52,7 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: Text(widget.title),
+        title: Center(child: Text(widget.title.toUpperCase(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),)),
         content: 
         Container(
         child: (!oscuro)?
@@ -64,7 +64,12 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
                 obscureText: oscuro,
                 controller: controller,
                 decoration: const InputDecoration(
-                border: OutlineInputBorder(),
+                 border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(10.0)),
+                  borderSide:
+                      BorderSide(color: Colors.grey, width: 0.0),
+                ),
                 ),
                 keyboardType: textoTipo,
               ),
@@ -74,12 +79,17 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
         ):Row(
                 children: [
                   SizedBox(
-                    width: 200,
+                    width: 230,
                     child: TextField(
                       controller: controller,
                       obscureText: type,
                       decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 0.0),
+                          ),
                       ),
                     ),
                   ),
@@ -96,9 +106,27 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
               ),
         ),
         actions: [
-          ElevatedButton(
-            child: const Text('Done'),
-            onPressed: () => Navigator.of(context).pop(controller.text),
+          Center(
+          child: ElevatedButton(
+              child: const Text(
+              'Done', 
+              style: TextStyle( 
+                fontSize: 19,
+                color: Colors.white,
+                fontFamily: "Heebo",
+                fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+            onPrimary: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            primary: Colors.teal,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15)),
+            ),
+              onPressed: () => Navigator.of(context).pop(controller.text),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
           )
         ],
         

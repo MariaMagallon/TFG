@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tfg/models/recipe.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:tfg/screens/createrecipescreen.dart';
-import 'package:tfg/screens/detailscreenunified.dart';
+import 'package:tfg/screens/createmodifyrecipescreen.dart';
+import 'package:tfg/screens/detailscreen.dart';
 import 'package:tfg/widgets/navigation_drawer_widget.dart';
 import 'package:tfg/globals/apikeys.dart';
 
@@ -30,40 +30,78 @@ class MyRecipes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: const Text('AppName'),
-            flexibleSpace: Container(
-                decoration: const BoxDecoration(color: Colors.indigo)),
-            actions: [
-              Builder(builder: (context) {
-                return IconButton(
-                  onPressed: () => Scaffold.of(context).openEndDrawer(),
-                  icon: const Icon(Icons.account_circle_rounded),
-                  iconSize: 30.0,
-                );
-              }),
-            ],
-            leading: IconButton(
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(color: Colors.teal)),
+              title: const Text(
+                'AppName',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontFamily: 'Heebo',
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              actions: [
+                Builder(builder: (context) {
+                  return IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: const Icon(Icons.account_circle_rounded),
+                    iconSize: 40.0,
+                    color: Colors.white,
+                  );
+                }),
+              ],
+              leading: IconButton(
               onPressed: () => {
-                Navigator.pop(context),
+                Navigator.of(context).pop(),
               },
               icon: const Icon(Icons.arrow_back_sharp),
-              iconSize: 30.0,
-            )),
+              iconSize: 40.0,
+            ),
+          ),
         endDrawer: const NavigationDrawerWidget(),
         body: SingleChildScrollView(
           child: Center(
               child: Column(
             children: <Widget>[
               const SizedBox(
-                height: 30,
+                height: 20,
               ),
-              const Center(
-                child: Text(
-                  ('My Recipes'),
-                  style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(15.0),
+                    child: Text(
+                      "My Recipes",
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.restaurant_menu,
+                        color: Colors.teal, size: 30.0),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                  width: 2, color: Colors.amber))),
+                    )
+                  ],
                 ),
               ),
               const SizedBox(
@@ -77,21 +115,35 @@ class MyRecipes extends StatelessWidget {
                           precipe: emptyrecipe, iscreating: true),
                     ));
                   },
-                  child: const Text(
+                  
+                child: const Text(
                     'Create a new recipe',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.white,
+                          fontFamily: "Heebo",
+                          fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     onPrimary: Colors.white,
-                    primary: Colors.indigo,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    primary: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
                   ),
                 ),
               ),
               const SizedBox(
                 height: 30,
               ),
-              const _RecipesAPI(),
-              _RecipesUser(),
+              const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: _RecipesAPI(),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left:20.0, right: 20.0),
+                child: _RecipesUser(),
+              ),
             ],
           )),
         ));
@@ -112,19 +164,22 @@ class _RecipesAPI extends StatelessWidget {
           return ErrorWidget(snapshot.error.toString());
         }
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Colors.teal,));
         }
         final _listrecipesAPI = snapshot.data!;
 
-        return GridView(
+        return GridView.count(
+             crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             physics: const ClampingScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
             children: List.generate(_listrecipesAPI.length, (index) {
               return GridTile(
+                 
                   child: GestureDetector(
+                    
                       onTap: () {
                         String idRecipe;
                         idRecipe = _listrecipesAPI[index].idapi!;
@@ -195,49 +250,51 @@ class _RecipeTileState extends State<RecipeTile> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder (
         future: getRecipeFromAPI(widget.id),
         builder: (context, AsyncSnapshot<Recipe> snapshot) {
           if (snapshot.hasError) {
             return ErrorWidget(snapshot.error.toString());
           }
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Colors.teal,));
           }
           recipeDetail = snapshot.data!;
           widget.imageurl = recipeDetail.image;
-          return Container(
-            margin: const EdgeInsets.all(8),
-            child: Stack(
-              children: <Widget>[
-                Image.network(
-                  widget.imageurl,
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.cover,
+          return Card(
+            color: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: NetworkImage(widget.imageurl),
+                  fit: BoxFit.cover
                 ),
-                Container(
-                  width: 200,
-                  alignment: Alignment.bottomLeft,
-                  decoration:
-                      BoxDecoration(color: Colors.white.withOpacity(0.5)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.title,
-                          style: const TextStyle(
-                              fontSize: 18,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                
+              ),
+              child: Transform.translate(
+                offset: const Offset(0, 50),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 50),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white.withOpacity(0.5)
                   ),
-                )
-              ],
+                  child: Text(
+                    widget.title.toUpperCase(), 
+                    style: const TextStyle( 
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontFamily: "Heebo",
+                      overflow: TextOverflow.clip,
+                      fontWeight: FontWeight.bold)),
+                ),
+              ),
+              
+                
+              
             ),
           );
         });
@@ -245,7 +302,7 @@ class _RecipeTileState extends State<RecipeTile> {
 }
 
 class _RecipesUser extends StatelessWidget {
-  _RecipesUser({
+  const _RecipesUser({
     Key? key,
   }) : super(key: key);
 
@@ -258,16 +315,17 @@ class _RecipesUser extends StatelessWidget {
           return ErrorWidget(snapshot.error.toString());
         }
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Colors.teal,));
         }
         final _listrecipesUser = snapshot.data!;
 
-        return GridView(
+        return GridView.count(
+             crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             physics: const ClampingScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200, mainAxisSpacing: 10.0),
             children: List.generate(_listrecipesUser.length, (index) {
               return GridTile(
                   child: GestureDetector(
@@ -308,44 +366,71 @@ class RecipeTileUser extends StatefulWidget {
 class _RecipeTileUserState extends State<RecipeTileUser> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(8),
-      child: Stack(
-        children: <Widget>[
-          widget.imageurl != ""
-              ? Image.network(
-                  widget.imageurl,
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.cover,
-                )
-              : Container(
-                  height: 200,
-                  width: 200,
-                  color: Colors.blue,
-                ),
-          Container(
-            width: 200,
-            alignment: Alignment.bottomLeft,
-            decoration: BoxDecoration(color: Colors.white.withOpacity(0.5)),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
+    return 
+          (widget.imageurl != "")?
+          Card(
+            color: Colors.transparent,
+            elevation: 0,
+            
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: NetworkImage(widget.imageurl),
+                  fit: BoxFit.cover
+            ),
+                
+              ),
+              child: Transform.translate(
+                offset: const Offset(0, 50),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 50),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white.withOpacity(0.5)
                   ),
-                ],
+                  child: Text(
+                    widget.title.toUpperCase(), 
+                    style: const TextStyle( 
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontFamily: "Heebo",
+                      overflow: TextOverflow.clip,
+                      fontWeight: FontWeight.bold)),
+                ),
               ),
             ),
-          )
-        ],
-      ),
-    );
+          ):Card(
+            color: Colors.transparent,
+            elevation: 0,
+            
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.teal,
+                
+              ),
+              child: Transform.translate(
+                offset: const Offset(0, 50),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 50),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white.withOpacity(0.5)
+                  ),
+                  child: Text(
+                    widget.title.toUpperCase(), 
+                    style: const TextStyle( 
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontFamily: "Heebo",
+                      overflow: TextOverflow.clip,
+                      fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+          );
   }
 }

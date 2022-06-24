@@ -17,7 +17,7 @@ Future<void> showMyDialog(
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('OK'),
+              child: const Text('OK',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.teal),),
               onPressed: () {
                 Navigator.of(context).pop();
               },

@@ -177,7 +177,13 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
       child: TextField(
         controller: controllerhealth,
         keyboardType: TextInputType.text,
-        decoration: const InputDecoration(labelText: 'Health Label'),
+        decoration: const InputDecoration(
+          labelText: 'Health Label',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+          ),
+        ),
         style: const TextStyle(fontSize: 20),
       ),
     );
@@ -198,7 +204,13 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
       child: TextField(
         controller: controllercuisine,
         keyboardType: TextInputType.text,
-        decoration: const InputDecoration(labelText: 'Cuisine Type'),
+        decoration: const InputDecoration(
+          labelText: 'Cuisine Type',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+          ),
+        ),
         style: const TextStyle(fontSize: 20),
       ),
     );
@@ -217,9 +229,16 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
     return SizedBox(
       width: 200,
       child: TextField(
+        
         controller: controllerdish,
         keyboardType: TextInputType.text,
-        decoration: const InputDecoration(labelText: 'Dish Type'),
+        decoration: const InputDecoration(
+          labelText: 'Dish Type',
+           border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+          ),
+        ),
         style: const TextStyle(fontSize: 20),
       ),
     );
@@ -240,7 +259,12 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
       child: TextField(
         controller: controlleringredient,
         keyboardType: TextInputType.text,
-        decoration: const InputDecoration(labelText: 'Subingredient'),
+        decoration: const InputDecoration(labelText: 'Subingredient',
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+        ),
+        ),
         style: const TextStyle(fontSize: 20),
       ),
     );
@@ -281,10 +305,14 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
       return Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: <Widget>[
-          Image.file(
-            File(imagePath!.path),
-            fit: BoxFit.cover,
-            height: 250,
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 20.0),
+            child: Image.file(
+              File(imagePath!.path),
+              fit: BoxFit.cover,
+              height: 250,
+            ),
           ),
         ],
       );
@@ -292,11 +320,15 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
       return Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: <Widget>[
-          Image.network(
-            _recipe.image,
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.cover,
-            height: 250,
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 20.0),
+            child: Image.network(
+              _recipe.image,
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
+              height: 250,
+            ),
           ),
         ],
       );
@@ -335,54 +367,113 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
         },
         child: Scaffold(
             appBar: AppBar(
-                title: const Text('AppName'),
-                flexibleSpace: Container(
-                    decoration: const BoxDecoration(color: Colors.indigo)),
-                actions: [
-                  Builder(builder: (context) {
-                    return IconButton(
-                      onPressed: () => Scaffold.of(context).openEndDrawer(),
-                      icon: const Icon(Icons.account_circle_rounded),
-                      iconSize: 30.0,
-                    );
-                  }),
-                ],
-                leading: IconButton(
-                  onPressed: () => {
-                    Navigator.of(context).pop(),
-                  },
-                  icon: const Icon(Icons.arrow_back_sharp),
-                  iconSize: 30.0,
-                )),
-            endDrawer: const NavigationDrawerWidget(),
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(color: Colors.teal)),
+              title: const Text(
+                'AppName',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontFamily: 'Heebo',
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              actions: [
+                Builder(builder: (context) {
+                  return IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: const Icon(Icons.account_circle_rounded),
+                    iconSize: 40.0,
+                    color: Colors.white,
+                  );
+                }),
+              ],
+              leading: IconButton(
+              onPressed: () => {
+                Navigator.of(context).pop(),
+              },
+              icon: const Icon(Icons.arrow_back_sharp),
+              iconSize: 40.0,
+            ),
+          ),
+          endDrawer: const NavigationDrawerWidget(),
             body: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
               ),
               child: _isloading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator(color: Colors.teal,))
                   : SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("Create a new recipe",
-                              style: TextStyle(
-                                fontSize: 30,
-                              )),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                             Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              
+                              child: Text(
+                                (iscreating)? "Create a new recipe": "Modify this recipe",
+                                style: const TextStyle(
+                                    fontSize: 25,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.edit,
+                                  color: Colors.teal, size: 30.0),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15, right: 15),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                            width: 2, color: Colors.amber))),
+                              )
+                            ],
+                          ),
+                        ),
                           const SizedBox(height: 30),
 
                           widgetShowImage(),
+                          const SizedBox(height: 30),
                           Padding(
                             padding:
                                 const EdgeInsets.only(left: 40.0, right: 40.0),
                             child: TextField(
-                                style: const TextStyle(color: Colors.black),
+                                style: const TextStyle(color: Colors.black, fontSize: 22),
                                 decoration: const InputDecoration(
-                                  labelText: "Title",
-                                  filled: true,
-                                  fillColor: Color.fromRGBO(255, 255, 255, 0.5),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                        color: Colors.grey, width: 0.0),
                                 ),
+                                labelText: "Title",
+                                filled: true,
+                                fillColor: Color.fromRGBO(255, 255, 255, 0.5),
+                                hintStyle: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
                                 controller: controllerlabel),
                           ),
                           const SizedBox(height: 30),
@@ -390,37 +481,65 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                             padding:
                                 const EdgeInsets.only(left: 40.0, right: 40.0),
                             child: TextField(
-                                style: const TextStyle(color: Colors.black),
-                                decoration: const InputDecoration(
-                                  labelText: "Instructions",
-                                  filled: true,
-                                  fillColor: Color.fromRGBO(255, 255, 255, 0.5),
+                                style: const TextStyle(color: Colors.black, fontSize: 20),
+                              decoration: const InputDecoration(
+                                 border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                        color: Colors.grey, width: 0.0),
                                 ),
+                                labelText: "Instructions",
+                                filled: true,
+                                fillColor: Color.fromRGBO(255, 255, 255, 0.5),
+                                hintStyle: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
                                 controller: controllerdescription),
                           ),
 
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 30),
                           Padding(
                             padding:
                                 const EdgeInsets.only(left: 40.0, right: 40.0),
                             child: TextField(
-                                style: const TextStyle(color: Colors.black),
-                                decoration: const InputDecoration(
-                                  labelText: "Calories",
-                                  filled: true,
-                                  fillColor: Color.fromRGBO(255, 255, 255, 0.5),
+                              style: const TextStyle(color: Colors.black, fontSize: 20),
+                              decoration: const InputDecoration(
+                                 border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                        color: Colors.grey, width: 0.0),
                                 ),
+                                labelText: "Calories",
+                                filled: true,
+                                fillColor: Color.fromRGBO(255, 255, 255, 0.5),
+                                hintStyle: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
                                 keyboardType: TextInputType.number,
                                 controller: controllercalories),
                           ),
                           const SizedBox(height: 30),
-                          imageName == "" ? Container() : Text(imageName),
-                          OutlinedButton(
+                          ElevatedButton(
                               onPressed: () async {
                                 isimagemodified = await imagePicker();
                               },
-                              child: const Text('Select image')),
-                          const SizedBox(height: 10),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                primary: Colors.teal,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              ),
+                              child: const Text('Select image',style: TextStyle(color: Colors.white, fontSize: 22))),
+                          const SizedBox(height: 30),
                           Padding(
                             padding:
                                 const EdgeInsets.only(left: 40.0, right: 40.0),
@@ -429,11 +548,21 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                               children: <Widget>[
                                 _buildSubingredientField(),
                                 ButtonTheme(
+                                  
                                   child: ElevatedButton(
                                     child: const Text('Add',
-                                        style: TextStyle(color: Colors.white)),
+                                        style: TextStyle(color: Colors.white, fontSize: 22)),
                                     onPressed: () => _addSubingredient(
                                         controlleringredient.text),
+                                    style: ElevatedButton.styleFrom(
+                                      onPrimary: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
+                                      primary: Colors.teal,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                    ),
                                   ),
                                 )
                               ],
@@ -452,7 +581,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                             },
                             itemBuilder: (BuildContext context, int index) {
                               return  Padding(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Row(
                                     children: [
                                       Text(
@@ -460,18 +589,22 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                         style: const TextStyle(
                                             fontSize: 15,
                                             color: Colors.black,
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                            overflow: TextOverflow.clip),
                                       ),
+                                      const Spacer(),
                                       IconButton(
                                         onPressed: () => editField(listingredients, index,"Change the Ingredient"),
                                         icon: const Icon(Icons.edit),
                                         iconSize: 30.0,
+                                        color: Colors.teal,
                                       ),
                                       IconButton(
                                         onPressed: () =>
                                             _removeField(index, listingredients),
                                         icon: const Icon(Icons.delete),
                                         iconSize: 30.0,
+                                        color: Colors.teal,
                                       ),
                                     ],
                                   ),
@@ -487,11 +620,21 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                               children: <Widget>[
                                 _buildHealthField(),
                                 ButtonTheme(
+                                  
                                   child: ElevatedButton(
                                     child: const Text('Add',
-                                        style: TextStyle(color: Colors.white)),
+                                        style: TextStyle(color: Colors.white, fontSize: 22)),
                                     onPressed: () =>
                                         _addHealth(controllerhealth.text),
+                                    style: ElevatedButton.styleFrom(
+                                      onPrimary: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
+                                      primary: Colors.teal,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                    ),
                                   ),
                                 )
                               ],
@@ -510,7 +653,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                             },
                             itemBuilder: (BuildContext context, int index) {
                               return  Padding(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Row(
                                     children: [
                                       Text(
@@ -520,16 +663,19 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                      const Spacer(),
                                       IconButton(
                                         onPressed: () => editField( listhealth, index, "Change the health label"),
                                         icon: const Icon(Icons.edit),
                                         iconSize: 30.0,
+                                        color: Colors.teal,
                                       ),
                                       IconButton(
                                         onPressed: () =>
                                             _removeField(index, listhealth),
                                         icon: const Icon(Icons.delete),
                                         iconSize: 30.0,
+                                        color: Colors.teal,
                                       ),
                                     ],
                                   ),
@@ -545,12 +691,23 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                               children: <Widget>[
                                 _buildDishField(),
                                 ButtonTheme(
+                                  
                                   child: ElevatedButton(
                                     child: const Text('Add',
-                                        style: TextStyle(color: Colors.white)),
+                                        style: TextStyle(color: Colors.white, fontSize: 22)),
                                     onPressed: () =>
                                         _addDish(controllerdish.text),
+                                    style: ElevatedButton.styleFrom(
+                                      onPrimary: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
+                                      primary: Colors.teal,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                    ),
                                   ),
+                                  
                                 )
                               ],
                             ),
@@ -568,7 +725,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                             },
                             itemBuilder: (BuildContext context, int index) {
                               return  Padding(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Row(
                                     children: [
                                       Text(
@@ -578,16 +735,19 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                      const Spacer(),
                                       IconButton(
                                         onPressed: () => editField( listdish, index, "Change the dish type"),
                                         icon: const Icon(Icons.edit),
                                         iconSize: 30.0,
+                                        color: Colors.teal,
                                       ),
                                       IconButton(
                                         onPressed: () =>
                                             _removeField(index, listdish),
                                         icon: const Icon(Icons.delete),
                                         iconSize: 30.0,
+                                        color: Colors.teal,
                                       ),
                                     ],
                                   ),
@@ -605,9 +765,18 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                 ButtonTheme(
                                   child: ElevatedButton(
                                     child: const Text('Add',
-                                        style: TextStyle(color: Colors.white)),
+                                        style: TextStyle(color: Colors.white, fontSize: 22)),
                                     onPressed: () =>
                                         _addCuisine(controllercuisine.text),
+                                    style: ElevatedButton.styleFrom(
+                                      onPrimary: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 10),
+                                      primary: Colors.teal,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                    ),
                                   ),
                                 )
                               ],
@@ -626,7 +795,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                             },
                             itemBuilder: (BuildContext context, int index) {
                               return  Padding(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Row(
                                     children: [
                                       Text(
@@ -636,16 +805,19 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                      const Spacer(),
                                       IconButton(
                                         onPressed: () => editField( listcuisine, index, "Change the cuisine type"),
                                         icon: const Icon(Icons.edit),
                                         iconSize: 30.0,
+                                        color: Colors.teal,
                                       ),
                                       IconButton(
                                         onPressed: () =>
                                             _removeField(index, listcuisine),
                                         icon: const Icon(Icons.delete),
                                         iconSize: 30.0,
+                                        color: Colors.teal,
                                       ),
                                     ],
                                   ),
@@ -704,17 +876,28 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                   }
                                 }
                               },
-                              child: Text(
-                                (textbotonsave),
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
+                          
+                          
+                          child: Text((textbotonsave),
+                                  style: const TextStyle(
+                                      fontSize: 22,
+                                      color: Colors.white,
+                                      fontFamily: "Heebo",
+                                      fontWeight: FontWeight.bold)),
                               style: ElevatedButton.styleFrom(
                                 onPrimary: Colors.white,
-                                primary: Colors.indigo,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                primary: Colors.teal,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)),
                               ),
-                            ),
+                            ),   
+                           
                           ),
+                        const SizedBox(
+                          height: 30,
+                        ),
                         ],
                       ),
                     ),
