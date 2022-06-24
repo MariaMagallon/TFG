@@ -198,15 +198,7 @@ class _ProfilePageScreenState extends State<ProfilePageScreen> {
             flexibleSpace:
                 Container(decoration: const BoxDecoration(color: Colors.teal)),
             //elevation: 0,
-            title: const Text(
-              'AppName',
-              style: TextStyle(
-                fontSize: 25,
-                fontFamily: 'Heebo',
-                color: Colors.black,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            title: Center(child: Image.asset("assets/logo.png", filterQuality:FilterQuality.high,)),
             actions: [
               Builder(builder: (context) {
                 return IconButton(
