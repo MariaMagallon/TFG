@@ -857,7 +857,7 @@ class _CreateModifyRecipeScreenState extends State<CreateModifyRecipeScreen> {
                                             _recipe.image);
                                       }
                                       imagePathModified =
-                                          await _uploadImage(); //subo y asocio imagepath a recipe
+                                          await _uploadImage(); 
                                     }
                                     if (imagePathModified.isNotEmpty) {
                                       _recipe.image = imagePathModified;

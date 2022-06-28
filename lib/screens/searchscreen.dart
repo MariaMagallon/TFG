@@ -280,52 +280,7 @@ class RecipeTile extends StatefulWidget {
   _RecipeTileState createState() => _RecipeTileState();
 }
 
-/*class _RecipeTileState extends State<RecipeTile> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(8),
-      child: Stack(
-        children: <Widget>[
-          Image.network(
-            widget.imageurl,
-            height: 200,
-            width: 200,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            width: 200,
-            height: 200,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.5),
-              border: Border.all(
-                color: Colors.teal, //                   <--- border color
-                width: 2.0,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(3.0)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}*/
+
 class _RecipeTileState extends State<RecipeTile> {
   @override
   Widget build(BuildContext context) {

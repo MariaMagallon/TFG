@@ -220,7 +220,7 @@ class _RecipeTileState extends State<RecipeTile> {
       healthLabels: [],
       cuisineType: []);
 
-//TODO: unificar getRecipeFromAPI amb el case origen 0 de detailscreen a getRecipe
+
 
   Future<Recipe> getRecipeFromAPI(String idrecipe) async {
     
